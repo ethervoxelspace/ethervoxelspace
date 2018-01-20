@@ -18,7 +18,7 @@ export class ContractService {
       this.contract = this.web3.eth.contract(ABI).at('0x2CC25bDaBD264aB306d47938F3c701A6dF0e883A');
 
       this.contract.VoxelPlaced().watch((error, response) => {
-        
+        console.log("EVENT - VOXEL PLACED: ", response);
       });
 
     } else {
@@ -28,7 +28,7 @@ export class ContractService {
 
   getExistingVoxel(x, y, z, callback) {
     this.contract.world(x, y, z, (error, result) => {
-      if (result.owner !== '0x0000000000000000000000000000000000000000') {
+      if (result[1] !== '0x0000000000000000000000000000000000000000') {
         callback(true);
       } else {
         callback(false);
@@ -40,8 +40,8 @@ export class ContractService {
       this.contract.placeVoxel(x, y, z, m, {
         "from": web3.eth.accounts[0],
         "value": web3.toWei(0.0001, "ether")
-      }).then((result) => {
-        alert('Voxel Placed!');
+      }, (error, result) => {
+        console.log("voxel placed");
       });
   }
 
