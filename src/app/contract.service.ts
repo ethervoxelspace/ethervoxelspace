@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import *  as Eth from 'ethjs';
+import *  as Web3 from 'web3';
 import { ABI } from './abi';
 declare var web3;
 
@@ -7,41 +7,42 @@ declare var web3;
 export class ContractService {
 
   private contract;
-  constructor() { 
-              // Checking if Web3 has been injected by the browser (Mist/MetaMask)
-              if (typeof web3 !== 'undefined') {
-    
-                // Use the browser's ethereum provider
-                var provider = web3.currentProvider;
-                const eth = new Eth(web3.currentProvider);
-    
-                
-                
-                this.contract = eth.contract(ABI).at('0xEdC3C30b481ad5B349456Db16d469A960e9bCCB0');
-            
-              } else {
-                console.log('No web3? You should consider trying MetaMask!')
-              }
+  private provider;
+  private web3;
+  constructor() {
+    // Checking if Web3 has been injected by the browser (Mist/MetaMask)
+    if (typeof web3 !== 'undefined') {
+      // Use the browser's ethereum provider
+      this.provider = web3.currentProvider;
+      this.web3 = new Web3(web3.currentProvider);
+      this.contract = this.web3.eth.contract(ABI).at('0x2CC25bDaBD264aB306d47938F3c701A6dF0e883A');
+
+      this.contract.VoxelPlaced().watch((error, response) => {
+        
+      });
+
+    } else {
+      console.log('No web3? You should consider trying MetaMask!')
+    }
   }
 
   getExistingVoxel(x, y, z, callback) {
-    //let existingVoxelArray = [];
-    /*
-    for (let x = 499; x < 502; x++) {
-      for (let y = 499; y < 502; y++) {
-        for (let z = 499; z < 502; z++) {
-        }
-      }
-    }
-    */
-    this.contract.world(x,y,x).then((result) => {
+    this.contract.world(x, y, z, (error, result) => {
       if (result.owner !== '0x0000000000000000000000000000000000000000') {
-        //existingVoxelArray.push([x,y,z, result.material.words[0]]);
-
-          callback(true);
-        
+        callback(true);
+      } else {
+        callback(false);
       }
     });
+  }
+
+  placeVoxel(x, y, z, m) {
+      this.contract.placeVoxel(x, y, z, m, {
+        "from": web3.eth.accounts[0],
+        "value": web3.toWei(0.0001, "ether")
+      }).then((result) => {
+        alert('Voxel Placed!');
+      });
   }
 
 }

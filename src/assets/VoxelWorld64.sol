@@ -1,0 +1,59 @@
+pragma solidity ^0.4.0;
+
+contract VoxelWorld64 {
+    
+    struct Voxel {
+        uint8 material;
+        address owner;
+    }
+    
+    event VoxelPlaced(uint8 x, uint8 y, uint8 z, uint8 material);
+    event VoxelRepainted(uint8 x, uint8 y, uint8 z, uint8 oldMaterial, uint8 newMaterial);
+    event VoxelDestroyed(uint8 x, uint8 y, uint8 z);
+    event VoxelTransfered(address to, uint8 x, uint8 y, uint8 z);
+    
+    address creator;
+    uint constant weiVoxelPrice = 1000000000000;
+    Voxel[64][64][64] public world;
+    
+    function VoxelWorld64() public {
+        creator = msg.sender;
+    }
+    
+    function isAvailable(uint8 x, uint8 y, uint8 z) private view returns (bool) {
+        if (x < 64 && y < 64 && z < 64 && world[x][y][z].owner == address(0)) {
+            return true;
+        } 
+        return false;
+    }
+    
+    function placeVoxel(uint8 x, uint8 y, uint8 z, uint8 material) payable public {
+        require(isAvailable(x, y, z) && msg.value >= weiVoxelPrice);
+        world[x][y][z] = Voxel(material, msg.sender);
+        VoxelPlaced(x, y, z, material);
+    }
+    
+    function repaintVoxel(uint8 x, uint8 y, uint8 z, uint8 newMaterial) public {
+        require(world[x][y][z].owner == msg.sender);
+        uint8 oldMaterial = world[x][y][z].material;
+        world[x][y][z].material = newMaterial;
+        VoxelRepainted(x, y, z, oldMaterial, newMaterial);
+    }
+    
+    function destroyVoxel(uint8 x, uint8 y, uint8 z) public {
+        require(world[x][y][z].owner == msg.sender);
+        world[x][y][z].owner = address(0);
+        VoxelDestroyed(x, y, z);
+    } 
+    
+    function transferVoxel(address to, uint8 x, uint8 y, uint8 z) public {
+        require(world[x][y][z].owner == msg.sender);
+        world[x][y][z].owner = to;
+        VoxelTransfered(to, x, y, z);
+    }
+    
+    function withdraw() public {
+        require(msg.sender == creator);
+        creator.transfer(this.balance);
+    }
+}

@@ -5,12 +5,14 @@ import { NgModule } from '@angular/core';
 import { AppComponent } from './app.component';
 import { PlaceExplorerComponent } from './place-explorer/place-explorer.component';
 import { ContractService } from './contract.service';
+import { ToolboxComponent } from './toolbox/toolbox.component';
 
 
 @NgModule({
   declarations: [
     AppComponent,
-    PlaceExplorerComponent
+    PlaceExplorerComponent,
+    ToolboxComponent
   ],
   imports: [
     BrowserModule
