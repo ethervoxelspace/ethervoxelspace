@@ -109,6 +109,9 @@ export class PlaceExplorerComponent implements OnInit {
   }
 
   spawnVoxelInScene(x, y, z, material) {
+    if(material > 15){
+      material = 0;
+    }
     const mat = new THREE.MeshBasicMaterial({ color: this.contractService.colorArray[material] });
     const voxel = new THREE.Mesh(this.geometry, mat);
     this.scene.add(voxel);

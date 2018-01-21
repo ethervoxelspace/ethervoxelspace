@@ -1,36 +1,87 @@
-X<input #x type="number" /><br>
-Y<input #y type="number" /><br>
-Z<input #z type="number" /><br>
-Color<input #m type="number" /><br>
-<button (click)="placeVoxel(x.value,y.value,z.value,m.value)">Place a new Voxel</button>
-<button (click)="destroyVoxel(x.value,y.value,z.value)">Destroy your Voxel</button>
-<button (click)="repaintVoxel(x.value,y.value,z.value,m.value)">Repaint your Voxel</button>
-<button (click)="transferVoxel(to.value,x.value,y.value,z.value)">Transfer your Voxel ownership</button>
-to this address: <input #to type="text" /><br>
+<div class="toolbox card">
+  <div class="tabs">
+    <ul>
+      <li [ngClass]="{ 'is-active' : placeMode }">
+        <a (click)="setMode('placeMode')">Place</a>
+      </li>
+      <li [ngClass]="{ 'is-active' : repaintMode }">
+        <a (click)="setMode('repaintMode')">Repaint</a>
+      </li>
+      <li [ngClass]="{ 'is-active' : destroyMode }">
+        <a (click)="setMode('destroyMode')">Destroy</a>
+      </li>
+      <li [ngClass]="{ 'is-active' : transferMode }">
+        <a (click)="setMode('transferMode')">Transfer</a>
+      </li>
+    </ul>
+  </div>
 
-<table>
-    <tr>
-      <td class="color0" style="color: white">0</td>
-      <td class="color1">1</td>
-      <td class="color2">2</td>
-      <td class="color3">3</td>
-    </tr>
-    <tr>
-      <td class="color4">4</td>
-      <td class="color5">5</td>
-      <td class="color6">6</td>
-      <td class="color7">7</td>
-    </tr>
-    <tr>
-      <td class="color8">8</td>
-      <td class="color9">9</td>
-      <td class="color10">10</td>
-      <td class="color11">11</td>
-    </tr>
-    <tr>
-      <td class="color12">12</td>
-      <td class="color13">13</td>
-      <td class="color14">14</td>
-      <td class="color15">15</td>
-    </tr>
-  </table>
+  <p>Coordinates:</p>
+  <div>
+    <div class="field is-horizontal">
+      <div class="field-label">
+        <label class="label">X</label>
+      </div>
+      <div class="field-body">
+        <input #x type="number" class="input" />
+      </div>
+    </div>
+    <div class="field is-horizontal">
+      <div class="field-label">
+        <label class="label">Y</label>
+      </div>
+      <div class="field-body">
+        <input #y type="number" class="input" />
+      </div>
+    </div>
+    <div class="field is-horizontal">
+      <div class="field-label">
+        <label class="label">Z</label>
+      </div>
+      <div class="field-body">
+        <input #z type="number" class="input" />
+      </div>
+    </div>
+  </div>
+
+
+  <div *ngIf="placeMode || repaintMode">
+    <p>Color:</p>
+    <select [(ngModel)]="m" class="input color{{m}}">
+      <option [value]="0" class="color0" selected>Black</option>
+      <option [value]="1" class="color1">Dark-blue</option>
+      <option [value]="2" class="color2">Dark-purple</option>
+      <option [value]="3" class="color3">Dark-green</option>
+      <option [value]="4" class="color4">Brown</option>
+      <option [value]="5" class="color5">Dark-gray</option>
+      <option [value]="6" class="color6">Light-gray</option>
+      <option [value]="7" class="color7">White</option>
+      <option [value]="8" class="color8">Red</option>
+      <option [value]="9" class="color9">Orange</option>
+      <option [value]="10" class="color10">Yellow</option>
+      <option [value]="11" class="color11">Green</option>
+      <option [value]="12" class="color12">Blue</option>
+      <option [value]="13" class="color13">Indigo</option>
+      <option [value]="14" class="color14">Pink</option>
+      <option [value]="15" class="color15">Peach</option>
+    </select>
+  </div>
+
+  <hr>
+
+  <div *ngIf="placeMode">
+    <button (click)="placeVoxel(x.value,y.value,z.value,m)" class="button">Place a new Voxel</button>
+  </div>
+  <div *ngIf="repaintMode">
+    <button (click)="repaintVoxel(x.value,y.value,z.value,m.value)" class="button">Repaint your Voxel</button>
+  </div>
+  <div *ngIf="destroyMode">
+    <button (click)="destroyVoxel(x.value,y.value,z.value)" class="button">Destroy your Voxel</button>
+  </div>
+  <div *ngIf="transferMode">
+    <button (click)="transferVoxel(to.value,x.value,y.value,z.value)" class="button">Transfer your Voxel ownership</button>
+    <br>to this address:
+    <input #to type="text" class="input" />
+    <br>
+  </div>
+</div>

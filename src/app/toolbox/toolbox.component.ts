@@ -13,6 +13,13 @@ export class ToolboxComponent implements OnInit {
   ngOnInit() {
   }
 
+  placeMode = true;
+  repaintMode = false;
+  destroyMode = false;
+  transferMode = false;
+
+  m = 0;
+
   placeVoxel(x: number, y: number, z: number, material: number) {
     if (!(x < 64 && y < 64 && z < 64 && material < 16)) {
       return;
@@ -36,6 +43,14 @@ export class ToolboxComponent implements OnInit {
       return;
     }
     this.contractService.transferVoxel(to, x, y, z);
+  }
+
+  setMode(mode: string){
+    this.placeMode = false;
+    this.repaintMode = false;
+    this.destroyMode = false;
+    this.transferMode = false;
+    this[mode] = true;
   }
 
 }
