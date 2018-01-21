@@ -37,16 +37,22 @@ export class ContractService {
       this.web3 = new Web3(web3.currentProvider);
       this.contract = this.web3.eth.contract(ABI).at('0x2CC25bDaBD264aB306d47938F3c701A6dF0e883A');
 
-      this.contract.VoxelPlaced().watch((error, response) => {
-        if(error) {
-          console.log('EVENT ERROR');
-        }
-        console.log("EVENT - VOXEL PLACED: ", response);
-      });
-
     } else {
       console.log('No web3? You should consider trying MetaMask!')
     }
+  }
+
+  public VoxelPlacedEvent() {
+    return this.contract.VoxelPlaced();
+  }
+  public VoxelRepaintedEvent() {
+    return this.contract.VoxelRepainted();
+  }
+  public VoxelDestroyedEvent() {
+    return this.contract.VoxelDestroyed();
+  }
+  public VoxelTransferredEvent() {
+    return this.contract.VoxelTransfered();
   }
 
   getExistingVoxel(x, y, z, callback) {
@@ -60,14 +66,27 @@ export class ContractService {
   }
 
   getWorldFromPastEvents(callback) {
-    this.contract.VoxelPlaced({}, { fromBlock: 0, toBlock: 'latest' }).get((error, eventResult) => {
-      if (error) {
-        console.log(error);
+    this.contract.VoxelPlaced({}, { fromBlock: 0, toBlock: 'latest' }).get((errorPlaced, eventResultPlaced) => {
+      if (errorPlaced) {
+        console.log(errorPlaced);
       } else {
-        // console.log('past VoxelPlaced events : ' + JSON.stringify(eventResult));
-        callback(eventResult);
+        this.contract.VoxelRepainted({}, { fromBlock: 0, toBlock: 'latest' }).get((errorRepainted, eventResultRepainted) => {
+          if (errorRepainted) {
+            console.log(errorRepainted);
+          } else {
+            this.contract.VoxelDestroyed({}, { fromBlock: 0, toBlock: 'latest' }).get((errorDestroyed, eventResultDestroyed) => {
+              if (errorDestroyed) {
+                console.log(errorDestroyed);
+              } else {
+                callback(eventResultPlaced.concat(eventResultRepainted).concat(eventResultDestroyed));
+              }
+            });
+          }
+        });
       }
     });
+
+
   }
 
   placeVoxel(x, y, z, m) {
@@ -78,5 +97,30 @@ export class ContractService {
       console.log("voxel placed");
     });
   }
+  destroyVoxel(x, y, z) {
+    this.contract.destroyVoxel(x, y, z, {
+      "from": web3.eth.accounts[0],
+      //"value": web3.toWei(0.0001, "ether")
+    }, (error, result) => {
+      console.log("voxel destroyed");
+    });
+  }
+  repaintVoxel(x, y, z, newMatarial) {
+    this.contract.repaintVoxel(x, y, z, newMatarial, {
+      "from": web3.eth.accounts[0],
+      //"value": web3.toWei(0.0001, "ether")
+    }, (error, result) => {
+      console.log("voxel repainted");
+    });
+  }
+  transferVoxel(to, x, y, z) {
+    this.contract.repaintVoxel(to, x, y, z, {
+      "from": web3.eth.accounts[0],
+      //"value": web3.toWei(0.0001, "ether")
+    }, (error, result) => {
+      console.log("voxel transfered");
+    });
+  }
+
 
 }

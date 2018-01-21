@@ -1,5 +1,36 @@
-x<input #x type="text" /><br>
-y<input #y type="text" /><br>
-z<input #z type="text" /><br>
-m<input #m type="text" /><br>
-<button (click)="placeVoxel(x.value,y.value,z.value,0)">Place a new Voxel</button>
+X<input #x type="number" /><br>
+Y<input #y type="number" /><br>
+Z<input #z type="number" /><br>
+Color<input #m type="number" /><br>
+<button (click)="placeVoxel(x.value,y.value,z.value,m.value)">Place a new Voxel</button>
+<button (click)="destroyVoxel(x.value,y.value,z.value)">Destroy your Voxel</button>
+<button (click)="repaintVoxel(x.value,y.value,z.value,m.value)">Repaint your Voxel</button>
+<button (click)="transferVoxel(to.value,x.value,y.value,z.value)">Transfer your Voxel ownership</button>
+to this address: <input #to type="text" /><br>
+
+<table>
+    <tr>
+      <td class="color0" style="color: white">0</td>
+      <td class="color1">1</td>
+      <td class="color2">2</td>
+      <td class="color3">3</td>
+    </tr>
+    <tr>
+      <td class="color4">4</td>
+      <td class="color5">5</td>
+      <td class="color6">6</td>
+      <td class="color7">7</td>
+    </tr>
+    <tr>
+      <td class="color8">8</td>
+      <td class="color9">9</td>
+      <td class="color10">10</td>
+      <td class="color11">11</td>
+    </tr>
+    <tr>
+      <td class="color12">12</td>
+      <td class="color13">13</td>
+      <td class="color14">14</td>
+      <td class="color15">15</td>
+    </tr>
+  </table>

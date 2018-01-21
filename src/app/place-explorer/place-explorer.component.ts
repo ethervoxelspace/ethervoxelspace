@@ -18,18 +18,16 @@ export class PlaceExplorerComponent implements OnInit {
   rendererWidth = 960;
   rendererHeight = 640;
 
-  ngOnInit() {
-    this.init();
-    this.animate();
-  }
-
   camera;
   scene;
   renderer;
   geometry;
   controls;
 
-  init() {
+  world = {};
+
+  ngOnInit() {
+
 
     const rendererElement = document.getElementById('world-viewer');
 
@@ -45,14 +43,14 @@ export class PlaceExplorerComponent implements OnInit {
 
     this.scene = new THREE.Scene();
     const environment_skybox = new THREE.CubeTextureLoader()
-    .setPath( 'assets/skybox/')
-    .load( [ 'xz.png', 'xz.png', 'posy.png', 'negy.png', 'xz.png', 'xz.png' ] );
+      .setPath('assets/skybox/')
+      .load(['xz.png', 'xz.png', 'posy.png', 'negy.png', 'xz.png', 'xz.png']);
     this.scene.background = environment_skybox;
 
     this.geometry = new THREE.BoxGeometry(1, 1, 1);
 
     this.renderer = new THREE.WebGLRenderer({ antialias: true });
-    this.renderer.setClearColor (0xffffff, 1);
+    this.renderer.setClearColor(0xffffff, 1);
     this.renderer.setSize(this.rendererWidth, this.rendererHeight);
     rendererElement.appendChild(this.renderer.domElement);
 
@@ -60,6 +58,44 @@ export class PlaceExplorerComponent implements OnInit {
 
     //this.populateMockWorld();
     this.populateWorldUsingPastEvents();
+
+    this.setUpWatchers();
+
+
+  }
+
+  getVoxelKey(x, y, z): string {
+    return x + ',' + y + ',' + z;
+  }
+
+  setUpWatchers() {
+    this.contractService.VoxelPlacedEvent().watch((error, response) => {
+      if (error) {
+        console.log('EVENT ERROR');
+      }
+      console.log("EVENT - VOXEL PLACED: ", response);
+      this.spawnVoxelInScene(response.args.x, response.args.y, response.args.z, response.args.material);
+    });
+    this.contractService.VoxelRepaintedEvent().watch((error, response) => {
+      if (error) {
+        console.log('EVENT ERROR');
+      }
+      console.log("EVENT - VOXEL REPAINTED: ", response);
+      this.repaintVoxelInScene(response.args.x, response.args.y, response.args.z, response.args.oldMaterial, response.args.newMaterial);
+    });
+    this.contractService.VoxelDestroyedEvent().watch((error, response) => {
+      if (error) {
+        console.log('EVENT ERROR');
+      }
+      console.log("EVENT - VOXEL DESTROYED: ", response);
+      this.destroyVoxelInScene(response.args.x, response.args.y, response.args.z);
+    });
+    this.contractService.VoxelTransferredEvent().watch((error, response) => {
+      if (error) {
+        console.log('EVENT ERROR');
+      }
+      console.log("EVENT - VOXEL TRANSFERRED: ", response);
+    });
   }
 
   populateMockWorld() {
@@ -74,15 +110,34 @@ export class PlaceExplorerComponent implements OnInit {
 
   spawnVoxelInScene(x, y, z, material) {
     const mat = new THREE.MeshBasicMaterial({ color: this.contractService.colorArray[material] });
-    const mesh = new THREE.Mesh(this.geometry, mat);
-    this.scene.add(mesh);
-    mesh.position.set(x, y, z);
+    const voxel = new THREE.Mesh(this.geometry, mat);
+    this.scene.add(voxel);
+    voxel.position.set(x, y, z);
+    this.world[this.getVoxelKey(x, y, z)] = voxel;
+  }
+
+  destroyVoxelInScene(x, y, z) {
+    this.scene.remove(this.world[this.getVoxelKey(x, y, z)]);
+    delete this.world[this.getVoxelKey(x, y, z)];
+  }
+
+  repaintVoxelInScene(x, y, z, oldMaterial, newMaterial) {
+    this.destroyVoxelInScene(x, y, z);
+    this.spawnVoxelInScene(x, y, z, newMaterial);
   }
 
   populateWorldUsingPastEvents() {
     this.contractService.getWorldFromPastEvents((events) => {
       for (const event of events) {
-        this.spawnVoxelInScene(event.args.x, event.args.y, event.args.z, 0);
+        if (event.event === "VoxelPlaced") {
+          this.spawnVoxelInScene(event.args.x, event.args.y, event.args.z, event.args.material);
+        }
+        if (event.event === "VoxelRepainted") {
+          this.repaintVoxelInScene(event.args.x, event.args.y, event.args.z, event.args.oldMaterial, event.args.newMaterial);
+        }
+        if (event.event === "VoxelDestroyed") {
+          this.destroyVoxelInScene(event.args.x, event.args.y, event.args.z);
+        }
       }
     });
   }

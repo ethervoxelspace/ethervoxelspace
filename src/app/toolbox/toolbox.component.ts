@@ -13,11 +13,29 @@ export class ToolboxComponent implements OnInit {
   ngOnInit() {
   }
 
-  placeVoxel(x: number, y: number, z: number, m: number) {
-    if (!(x < 64 && y < 64 && z < 64 && m < 16)) {
+  placeVoxel(x: number, y: number, z: number, material: number) {
+    if (!(x < 64 && y < 64 && z < 64 && material < 16)) {
       return;
     }
-    this.contractService.placeVoxel(x,y,z,m);
+    this.contractService.placeVoxel(x, y, z, material);
+  }
+  destroyVoxel(x: number, y: number, z: number) {
+    if (!(x < 64 && y < 64 && z < 64)) {
+      return;
+    }
+    this.contractService.destroyVoxel(x, y, z);
+  }
+  repaintVoxel(x: number, y: number, z: number, newMaterial:number ) {
+    if (!(x < 64 && y < 64 && z < 64 && newMaterial < 16)) {
+      return;
+    }
+    this.contractService.repaintVoxel(x, y, z, newMaterial);
+  }
+  transferVoxel(to: string, x: number, y: number, z: number) {
+    if (!(x < 64 && y < 64 && z < 64 && to)) {
+      return;
+    }
+    this.contractService.transferVoxel(to, x, y, z);
   }
 
 }
