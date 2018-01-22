@@ -1,11 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { ContractService } from '../contract.service';
+import { Engine } from '../engine';
+
 declare var THREE: any;
-interface vec3 {
-  x: number;
-  y: number;
-  z: number;
-}
+
 @Component({
   selector: 'app-place-explorer',
   templateUrl: './place-explorer.component.html',
@@ -15,53 +13,15 @@ export class PlaceExplorerComponent implements OnInit {
 
   constructor(private contractService: ContractService) { }
 
-  rendererWidth = 960;
-  rendererHeight = 640;
-
-  camera;
-  scene;
-  renderer;
-  geometry;
-  controls;
-
   world = {};
 
   ngOnInit() {
-
-
-    const rendererElement = document.getElementById('world-viewer');
-
-    this.camera = new THREE.PerspectiveCamera(45, this.rendererWidth / this.rendererHeight, 1, 10000);
-    //this.camera = new THREE.OrthographicCamera( this.rendererWidth / - 2, this.rendererWidth / 2, this.rendererHeight / 2, this.rendererHeight / - 2, 1, 10000 );
-    this.camera.position.x = 32;
-    this.camera.position.y = 32;
-    this.camera.position.z = 32;
-
-    //this.controls = new THREE.TrackballControls( this.camera );
-    this.controls = new THREE.OrbitControls(this.camera, rendererElement);
-    this.controls.zoomSpeed = 2.0;
-
-    this.scene = new THREE.Scene();
-    const environment_skybox = new THREE.CubeTextureLoader()
-      .setPath('assets/skybox/')
-      .load(['xz.png', 'xz.png', 'posy.png', 'negy.png', 'xz.png', 'xz.png']);
-    this.scene.background = environment_skybox;
-
-    this.geometry = new THREE.BoxGeometry(1, 1, 1);
-
-    this.renderer = new THREE.WebGLRenderer({ antialias: true });
-    this.renderer.setClearColor(0xffffff, 1);
-    this.renderer.setSize(this.rendererWidth, this.rendererHeight);
-    rendererElement.appendChild(this.renderer.domElement);
-
-    window.setInterval(() => { this.animate() }, 20);
+    Engine.initialize();
 
     //this.populateMockWorld();
     this.populateWorldUsingPastEvents();
 
     this.setUpWatchers();
-
-
   }
 
   getVoxelKey(x, y, z): string {
@@ -113,14 +73,14 @@ export class PlaceExplorerComponent implements OnInit {
       material = 0;
     }
     const mat = new THREE.MeshBasicMaterial({ color: this.contractService.colorArray[material] });
-    const voxel = new THREE.Mesh(this.geometry, mat);
-    this.scene.add(voxel);
+    const voxel = new THREE.Mesh(Engine.geometry, mat);
+    Engine.scene.add(voxel);
     voxel.position.set(x, y, z);
     this.world[this.getVoxelKey(x, y, z)] = voxel;
   }
 
   destroyVoxelInScene(x, y, z) {
-    this.scene.remove(this.world[this.getVoxelKey(x, y, z)]);
+    Engine.scene.remove(this.world[this.getVoxelKey(x, y, z)]);
     delete this.world[this.getVoxelKey(x, y, z)];
   }
 
@@ -145,9 +105,6 @@ export class PlaceExplorerComponent implements OnInit {
     });
   }
 
-  animate() {
-    this.renderer.render(this.scene, this.camera);
-    //this.controls.update();
-  }
+
 
 }
