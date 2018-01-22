@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import *  as Web3 from 'web3';
 import { ABI } from './abi';
-declare var web3;
 
 @Injectable()
 export class ContractService {

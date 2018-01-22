@@ -73,7 +73,7 @@
     <button (click)="placeVoxel(x.value,y.value,z.value,m)" class="button">Place a new Voxel</button>
   </div>
   <div *ngIf="repaintMode">
-    <button (click)="repaintVoxel(x.value,y.value,z.value,m.value)" class="button">Repaint your Voxel</button>
+    <button (click)="repaintVoxel(x.value,y.value,z.value,m)" class="button">Repaint your Voxel</button>
   </div>
   <div *ngIf="destroyMode">
     <button (click)="destroyVoxel(x.value,y.value,z.value)" class="button">Destroy your Voxel</button>
@@ -85,3 +85,6 @@
     <br>
   </div>
 </div>
+
+
+<button (click)="updateToolboxVoxel(x.value,y.value,z.value,m)">preview</button>

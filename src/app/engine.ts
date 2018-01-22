@@ -1,4 +1,3 @@
-declare var THREE: any;
 export class Engine {
 
     static scene;
@@ -21,9 +20,7 @@ export class Engine {
 
         Engine.camera = new THREE.PerspectiveCamera(45, rendererWidth / rendererHeight, 1, 10000);
         //this.camera = new THREE.OrthographicCamera( this.rendererWidth / - 2, this.rendererWidth / 2, this.rendererHeight / 2, this.rendererHeight / - 2, 1, 10000 );
-        Engine.camera.position.x = 32;
-        Engine.camera.position.y = 32;
-        Engine.camera.position.z = 32;
+        Engine.camera.position.set(32,32,32);
 
         const controls = new THREE.OrbitControls(Engine.camera, rendererElement);
         controls.zoomSpeed = 2.0;

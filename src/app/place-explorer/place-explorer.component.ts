@@ -2,8 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { ContractService } from '../contract.service';
 import { Engine } from '../engine';
 
-declare var THREE: any;
-
 @Component({
   selector: 'app-place-explorer',
   templateUrl: './place-explorer.component.html',
