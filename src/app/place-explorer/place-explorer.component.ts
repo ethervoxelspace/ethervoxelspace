@@ -11,7 +11,7 @@ export class PlaceExplorerComponent implements OnInit {
 
   constructor(private contractService: ContractService) { }
 
-  world = {};
+  
 
   ngOnInit() {
     Engine.initialize();
@@ -74,12 +74,12 @@ export class PlaceExplorerComponent implements OnInit {
     const voxel = new THREE.Mesh(Engine.geometry, mat);
     Engine.scene.add(voxel);
     voxel.position.set(x, y, z);
-    this.world[this.getVoxelKey(x, y, z)] = voxel;
+    Engine.world[this.getVoxelKey(x, y, z)] = voxel;
   }
 
   destroyVoxelInScene(x, y, z) {
-    Engine.scene.remove(this.world[this.getVoxelKey(x, y, z)]);
-    delete this.world[this.getVoxelKey(x, y, z)];
+    Engine.scene.remove(Engine.world[this.getVoxelKey(x, y, z)]);
+    delete Engine.world[this.getVoxelKey(x, y, z)];
   }
 
   repaintVoxelInScene(x, y, z, oldMaterial, newMaterial) {
@@ -102,7 +102,4 @@ export class PlaceExplorerComponent implements OnInit {
       }
     });
   }
-
-
-
 }

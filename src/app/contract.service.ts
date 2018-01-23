@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import *  as Web3 from 'web3';
-import { ABI } from './abi';
+import * as Web3 from 'web3';
+import { ABI } from './ABI';
 
 @Injectable()
 export class ContractService {
@@ -90,34 +90,34 @@ export class ContractService {
 
   placeVoxel(x, y, z, m) {
     this.contract.placeVoxel(x, y, z, m, {
-      "from": web3.eth.accounts[0],
-      "value": web3.toWei(0.0001, "ether")
+      'from': web3.eth.accounts[0],
+      'value': web3.toWei(0.0001, 'ether')
     }, (error, result) => {
-      console.log("voxel placed");
+      console.log('voxel placed');
     });
   }
   destroyVoxel(x, y, z) {
     this.contract.destroyVoxel(x, y, z, {
-      "from": web3.eth.accounts[0],
-      //"value": web3.toWei(0.0001, "ether")
+      'from': web3.eth.accounts[0],
+      // 'value': web3.toWei(0.0001, 'ether')
     }, (error, result) => {
-      console.log("voxel destroyed");
+      console.log('voxel destroyed');
     });
   }
   repaintVoxel(x, y, z, newMatarial) {
     this.contract.repaintVoxel(x, y, z, newMatarial, {
-      "from": web3.eth.accounts[0],
-      //"value": web3.toWei(0.0001, "ether")
+      'from': web3.eth.accounts[0],
+      // 'value': web3.toWei(0.0001, 'ether')
     }, (error, result) => {
-      console.log("voxel repainted");
+      console.log('voxel repainted');
     });
   }
   transferVoxel(to, x, y, z) {
     this.contract.repaintVoxel(to, x, y, z, {
-      "from": web3.eth.accounts[0],
-      //"value": web3.toWei(0.0001, "ether")
+      'from': web3.eth.accounts[0],
+      // 'value': web3.toWei(0.0001, 'ether')
     }, (error, result) => {
-      console.log("voxel transfered");
+      console.log('voxel transfered');
     });
   }
 

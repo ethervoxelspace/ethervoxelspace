@@ -4,14 +4,14 @@ export class Engine {
     static geometry;
     static renderer;
     static camera;
+    static world;
 
-    constructor() {
-
-    }
+    constructor() {}
 
     static initialize() {
         Engine.scene = new THREE.Scene();
         Engine.geometry = new THREE.BoxGeometry(1, 1, 1);
+        Engine.world = {};
 
         const rendererWidth = 960;
         const rendererHeight = 640;
