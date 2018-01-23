@@ -16,12 +16,45 @@ export class ToolboxComponent implements OnInit {
   destroyMode = false;
   transferMode = false;
 
+  errorMsg: string;
+  successMsg: string;
+  showError = false;
+  showSuccess = false;
+
   m = 0;
 
   toolboxVoxel: any;
 
   ngOnInit() {
     this.spawnToolboxVoxel();
+    this.checkWeb3();
+  }
+
+  checkWeb3() {
+    if (typeof web3 === 'undefined') {
+      this.error('Error. Make sure you have a MetaMask plugin installed.');
+    }
+  }
+
+  validUint8(numbers: number[]) {
+    for (const n of numbers) {
+      if (!(n > -1 && Number.isInteger(n))) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  error(msg: string) {
+    this.errorMsg = msg;
+    this.showSuccess = false;
+    this.showError = true;
+  }
+
+  success(msg: string) {
+    this.successMsg = msg;
+    this.showSuccess = true;
+    this.showError = false;
   }
 
   spawnToolboxVoxel() {
@@ -41,28 +74,66 @@ export class ToolboxComponent implements OnInit {
   }
 
   placeVoxel(x: number, y: number, z: number, material: number) {
-    if (!(x < 64 && y < 64 && z < 64 && material < 16)) {
+    if (Engine.world[Engine.getVoxelKey(x, y, z)]) {
+      this.error('There is already a voxel there.');
       return;
     }
-    this.contractService.placeVoxel(x, y, z, material);
+    if (!(x < 64 && y < 64 && z < 64 && material < 16)
+      && !this.validUint8([x, y, z, material])) {
+      this.error('Wrong parameters.');
+      return;
+    }
+    this.contractService.placeVoxel(x, y, z, material, (e) => {
+      if (e) {
+        this.error('Error. Voxel has not been placed on the blockchain.');
+      } else {
+        this.success('Voxel has been successfuly placed on the blockchain.');
+      }
+    });
   }
   destroyVoxel(x: number, y: number, z: number) {
-    if (!(x < 64 && y < 64 && z < 64)) {
+    if (Engine.world[Engine.getVoxelKey(x, y, z)]) {
+      this.error('There is already a voxel there.');
       return;
     }
-    this.contractService.destroyVoxel(x, y, z);
+    if (!(x < 64 && y < 64 && z < 64) && !this.validUint8([x, y, z])) {
+      this.error('Wrong parameters.');
+      return;
+    }
+    this.contractService.destroyVoxel(x, y, z, (e) => {
+      if (e) {
+        this.error('Error. Voxel has not been removed from the blockchain.');
+      } else {
+        this.success('Voxel has been successfuly removed from the blockchain.');
+      }
+    });
   }
   repaintVoxel(x: number, y: number, z: number, newMaterial: number) {
-    if (!(x < 64 && y < 64 && z < 64 && newMaterial < 16)) {
+    if (!(x < 64 && y < 64 && z < 64 && newMaterial < 16)
+    && !this.validUint8([x, y, z, newMaterial])) {
+      this.error('Wrong parameters.');
       return;
     }
-    this.contractService.repaintVoxel(x, y, z, newMaterial);
+    this.contractService.repaintVoxel(x, y, z, newMaterial, (e) => {
+      if (e) {
+        this.error('Error. Voxel has not been repainted on the blockchain.');
+      } else {
+        this.success('Voxel has been successfuly repainted on the blockchain.');
+      }
+    });
   }
   transferVoxel(to: string, x: number, y: number, z: number) {
-    if (!(x < 64 && y < 64 && z < 64 && to)) {
+    if (!(x < 64 && y < 64 && z < 64 && to) && !this.validUint8([x, y, z])) {
+      this.error('Wrong parameters.');
       return;
     }
-    this.contractService.transferVoxel(to, x, y, z);
+    this.contractService.transferVoxel(to, x, y, z, (e) => {
+      if (e) {
+        this.error('Error. Voxel has not been transferred on the blockchain.');
+      } else {
+        this.success('Voxel has been successfuly transferred on the blockchain.');
+      }
+    });
   }
 
   setMode(mode: string) {

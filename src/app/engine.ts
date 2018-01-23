@@ -8,6 +8,10 @@ export class Engine {
 
     constructor() {}
 
+    static getVoxelKey(x, y, z): string {
+        return x + ',' + y + ',' + z;
+    }
+
     static initialize() {
         Engine.scene = new THREE.Scene();
         Engine.geometry = new THREE.BoxGeometry(1, 1, 1);
@@ -28,7 +32,10 @@ export class Engine {
         const environment_skybox = new THREE.CubeTextureLoader()
             .setPath('assets/skybox/')
             .load(['xz.png', 'xz.png', 'posy.png', 'negy.png', 'xz.png', 'xz.png']);
-            Engine.scene.background = environment_skybox;
+        Engine.scene.background = environment_skybox;
+
+        const light = new THREE.HemisphereLight( 0xffffff, 0xbbbbbb, 1.0 );
+        Engine.scene.add( light );
 
         Engine.renderer = new THREE.WebGLRenderer({ antialias: true });
         Engine.renderer.setClearColor(0xffffff, 1);

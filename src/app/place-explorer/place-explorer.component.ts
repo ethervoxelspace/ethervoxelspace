@@ -11,8 +11,6 @@ export class PlaceExplorerComponent implements OnInit {
 
   constructor(private contractService: ContractService) { }
 
-  
-
   ngOnInit() {
     Engine.initialize();
 
@@ -22,14 +20,11 @@ export class PlaceExplorerComponent implements OnInit {
     this.setUpWatchers();
   }
 
-  getVoxelKey(x, y, z): string {
-    return x + ',' + y + ',' + z;
-  }
-
   setUpWatchers() {
     this.contractService.VoxelPlacedEvent().watch((error, response) => {
       if (error) {
         console.log('EVENT ERROR');
+        return;
       }
       console.log("EVENT - VOXEL PLACED: ", response);
       this.spawnVoxelInScene(response.args.x, response.args.y, response.args.z, response.args.material);
@@ -37,6 +32,7 @@ export class PlaceExplorerComponent implements OnInit {
     this.contractService.VoxelRepaintedEvent().watch((error, response) => {
       if (error) {
         console.log('EVENT ERROR');
+        return;
       }
       console.log("EVENT - VOXEL REPAINTED: ", response);
       this.repaintVoxelInScene(response.args.x, response.args.y, response.args.z, response.args.oldMaterial, response.args.newMaterial);
@@ -44,6 +40,7 @@ export class PlaceExplorerComponent implements OnInit {
     this.contractService.VoxelDestroyedEvent().watch((error, response) => {
       if (error) {
         console.log('EVENT ERROR');
+        return;
       }
       console.log("EVENT - VOXEL DESTROYED: ", response);
       this.destroyVoxelInScene(response.args.x, response.args.y, response.args.z);
@@ -51,8 +48,10 @@ export class PlaceExplorerComponent implements OnInit {
     this.contractService.VoxelTransferredEvent().watch((error, response) => {
       if (error) {
         console.log('EVENT ERROR');
+        return;
       }
       console.log("EVENT - VOXEL TRANSFERRED: ", response);
+      this.transferVoxelInScene(response.args.to, response.args.x, response.args.y, response.args.z);
     });
   }
 
@@ -70,21 +69,25 @@ export class PlaceExplorerComponent implements OnInit {
     if(material > 15){
       material = 0;
     }
-    const mat = new THREE.MeshBasicMaterial({ color: this.contractService.colorArray[material] });
+    const mat = new THREE.MeshLambertMaterial({ color: this.contractService.colorArray[material] });
     const voxel = new THREE.Mesh(Engine.geometry, mat);
     Engine.scene.add(voxel);
     voxel.position.set(x, y, z);
-    Engine.world[this.getVoxelKey(x, y, z)] = voxel;
+    Engine.world[Engine.getVoxelKey(x, y, z)] = voxel; // {v: voxel, o:};
   }
 
   destroyVoxelInScene(x, y, z) {
-    Engine.scene.remove(Engine.world[this.getVoxelKey(x, y, z)]);
-    delete Engine.world[this.getVoxelKey(x, y, z)];
+    Engine.scene.remove(Engine.world[Engine.getVoxelKey(x, y, z)]);
+    delete Engine.world[Engine.getVoxelKey(x, y, z)];
   }
 
   repaintVoxelInScene(x, y, z, oldMaterial, newMaterial) {
     this.destroyVoxelInScene(x, y, z);
     this.spawnVoxelInScene(x, y, z, newMaterial);
+  }
+
+  transferVoxelInScene(to, x, y, z) {
+    // Engine.world[Engine.getVoxelKey(x, y, z)]
   }
 
   populateWorldUsingPastEvents() {

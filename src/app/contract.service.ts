@@ -37,7 +37,7 @@ export class ContractService {
       this.contract = this.web3.eth.contract(ABI).at('0x2CC25bDaBD264aB306d47938F3c701A6dF0e883A');
 
     } else {
-      console.log('No web3? You should consider trying MetaMask!')
+      console.log('No web3? You should consider trying MetaMask!');
     }
   }
 
@@ -52,6 +52,10 @@ export class ContractService {
   }
   public VoxelTransferredEvent() {
     return this.contract.VoxelTransfered();
+  }
+
+  getUserAccount() {
+    return web3.eth.accounts[0];
   }
 
   getExistingVoxel(x, y, z, callback) {
@@ -88,36 +92,37 @@ export class ContractService {
 
   }
 
-  placeVoxel(x, y, z, m) {
+  placeVoxel(x, y, z, m, cb) {
     this.contract.placeVoxel(x, y, z, m, {
       'from': web3.eth.accounts[0],
       'value': web3.toWei(0.0001, 'ether')
     }, (error, result) => {
       console.log('voxel placed');
+      cb(error);
     });
   }
-  destroyVoxel(x, y, z) {
+  destroyVoxel(x, y, z, cb) {
     this.contract.destroyVoxel(x, y, z, {
       'from': web3.eth.accounts[0],
-      // 'value': web3.toWei(0.0001, 'ether')
     }, (error, result) => {
       console.log('voxel destroyed');
+      cb(error);
     });
   }
-  repaintVoxel(x, y, z, newMatarial) {
+  repaintVoxel(x, y, z, newMatarial, cb) {
     this.contract.repaintVoxel(x, y, z, newMatarial, {
       'from': web3.eth.accounts[0],
-      // 'value': web3.toWei(0.0001, 'ether')
     }, (error, result) => {
       console.log('voxel repainted');
+      cb(error);
     });
   }
-  transferVoxel(to, x, y, z) {
+  transferVoxel(to, x, y, z, cb) {
     this.contract.repaintVoxel(to, x, y, z, {
       'from': web3.eth.accounts[0],
-      // 'value': web3.toWei(0.0001, 'ether')
     }, (error, result) => {
       console.log('voxel transfered');
+      cb(error);
     });
   }
 

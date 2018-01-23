@@ -7,10 +7,10 @@ contract VoxelWorld64 {
         address owner;
     }
     
-    event VoxelPlaced(uint8 x, uint8 y, uint8 z, uint8 material);
+    event VoxelPlaced(address owner, uint8 x, uint8 y, uint8 z, uint8 material);
     event VoxelRepainted(uint8 x, uint8 y, uint8 z, uint8 oldMaterial, uint8 newMaterial);
-    event VoxelDestroyed(uint8 x, uint8 y, uint8 z);
-    event VoxelTransfered(address to, uint8 x, uint8 y, uint8 z);
+    event VoxelDestroyed( uint8 x, uint8 y, uint8 z);
+    event VoxelTransfered(address from, address to, uint8 x, uint8 y, uint8 z);
     
     address creator;
     uint constant weiVoxelPrice = 1000000000000;

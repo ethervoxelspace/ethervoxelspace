@@ -44,7 +44,6 @@
     </div>
   </div>
 
-
   <div *ngIf="placeMode || repaintMode">
     <p>Color:</p>
     <select [(ngModel)]="m" class="input color{{m}}">
@@ -70,6 +69,7 @@
   <hr>
 
   <div *ngIf="placeMode">
+      <button (click)="updateToolboxVoxel(x.value,y.value,z.value,m)" class="button">Preview</button>
     <button (click)="placeVoxel(x.value,y.value,z.value,m)" class="button">Place a new Voxel</button>
   </div>
   <div *ngIf="repaintMode">
@@ -84,7 +84,15 @@
     <input #to type="text" class="input" />
     <br>
   </div>
+
+  <div *ngIf="showSuccess" class="notification is-success">
+      <button (click)="showSuccess = false" class="delete"></button>
+      {{successMsg}}
+    </div>
+
+  <div *ngIf="showError" class="notification is-danger">
+      <button (click)="showError = false" class="delete"></button>
+      {{errorMsg}}
+  </div>
+
 </div>
-
-
-<button (click)="updateToolboxVoxel(x.value,y.value,z.value,m)">preview</button>
