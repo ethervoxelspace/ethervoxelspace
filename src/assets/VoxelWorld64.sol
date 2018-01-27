@@ -9,11 +9,11 @@ contract VoxelWorld64 {
     
     event VoxelPlaced(address owner, uint8 x, uint8 y, uint8 z, uint8 material);
     event VoxelRepainted(uint8 x, uint8 y, uint8 z, uint8 oldMaterial, uint8 newMaterial);
-    event VoxelDestroyed( uint8 x, uint8 y, uint8 z);
+    event VoxelDestroyed(uint8 x, uint8 y, uint8 z);
     event VoxelTransfered(address from, address to, uint8 x, uint8 y, uint8 z);
     
     address creator;
-    uint constant weiVoxelPrice = 1000000000000;
+    uint constant PRICE = 1000000000000;
     Voxel[64][64][64] public world;
     
     function VoxelWorld64() public {
@@ -28,28 +28,28 @@ contract VoxelWorld64 {
     }
     
     function placeVoxel(uint8 x, uint8 y, uint8 z, uint8 material) payable public {
-        require(isAvailable(x, y, z) && msg.value >= weiVoxelPrice);
+        require(isAvailable(x, y, z) && msg.value >= PRICE);
         world[x][y][z] = Voxel(material, msg.sender);
-        VoxelPlaced(x, y, z, material);
+        VoxelPlaced(msg.sender, x, y, z, material);
     }
     
-    function repaintVoxel(uint8 x, uint8 y, uint8 z, uint8 newMaterial) public {
-        require(world[x][y][z].owner == msg.sender);
+    function repaintVoxel(uint8 x, uint8 y, uint8 z, uint8 newMaterial) payable public {
+        require(world[x][y][z].owner == msg.sender && msg.value >= PRICE);
         uint8 oldMaterial = world[x][y][z].material;
         world[x][y][z].material = newMaterial;
         VoxelRepainted(x, y, z, oldMaterial, newMaterial);
     }
     
-    function destroyVoxel(uint8 x, uint8 y, uint8 z) public {
-        require(world[x][y][z].owner == msg.sender);
+    function destroyVoxel(uint8 x, uint8 y, uint8 z) payable public {
+        require(world[x][y][z].owner == msg.sender && msg.value >= PRICE);
         world[x][y][z].owner = address(0);
         VoxelDestroyed(x, y, z);
     } 
     
-    function transferVoxel(address to, uint8 x, uint8 y, uint8 z) public {
-        require(world[x][y][z].owner == msg.sender);
+    function transferVoxel(address to, uint8 x, uint8 y, uint8 z) payable public {
+        require(world[x][y][z].owner == msg.sender && msg.value >= PRICE);
         world[x][y][z].owner = to;
-        VoxelTransfered(to, x, y, z);
+        VoxelTransfered(msg.sender, to, x, y, z);
     }
     
     function withdraw() public {
