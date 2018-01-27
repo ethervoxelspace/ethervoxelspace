@@ -1,9 +1,22 @@
+header{
+    padding: 15px;
+}
+
+.logo{
+    height: 50px;
+}
+
 .place{
     display: flex;
     justify-content: space-around;
 }
 
-
 app-toolbox{
     width:30%;
+}
+
+.whitepaper {
+    width: 30%;
+    padding: 15px;
+    margin: 40px auto;
 }

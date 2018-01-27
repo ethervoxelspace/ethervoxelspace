@@ -53,8 +53,9 @@ export class Engine {
 
         event.preventDefault();
 
-        mouse.x = ( event.clientX / Engine.renderer.domElement.clientWidth ) * 2 - 1;
-        mouse.y = - ( event.clientY / Engine.renderer.domElement.clientHeight ) * 2 + 1;
+        const rect = Engine.renderer.domElement.getBoundingClientRect();
+        mouse.x = ( ( event.clientX - rect.left ) / ( rect.right - rect.left ) ) * 2 - 1;
+        mouse.y = - ( ( event.clientY - rect.top ) / ( rect.bottom - rect.top) ) * 2 + 1;
 
         raycaster.setFromCamera( mouse, Engine.camera );
 
@@ -68,7 +69,7 @@ export class Engine {
     }
 
     static setSelectedVoxel(x, y, z) {
-        Engine.selectedVoxel = Engine.world[Engine.getVoxelKey(x, y, z)];
+        Engine.selectedVoxel = Engine.world[Engine.getVoxelKey(x, y, z)].clone();
     }
 
     static animate() {

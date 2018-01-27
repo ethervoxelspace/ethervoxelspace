@@ -57,7 +57,7 @@ export class ContractService {
     return this.contract.VoxelTransfered();
   }
 
-  getUserAccount() {
+  getUserAccount(): string {
     return web3.eth.accounts[0];
   }
 

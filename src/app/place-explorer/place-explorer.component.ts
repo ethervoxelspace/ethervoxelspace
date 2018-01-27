@@ -75,7 +75,7 @@ export class PlaceExplorerComponent implements OnInit {
     voxel.position.set(x, y, z);
     // TODO: set voxel owner address
     // voxel.ownerAddress = ...
-    Engine.world[Engine.getVoxelKey(x, y, z)] = voxel; // {v: voxel, o:};
+    Engine.world[Engine.getVoxelKey(x, y, z)] = voxel;
   }
 
   destroyVoxelInScene(x, y, z) {

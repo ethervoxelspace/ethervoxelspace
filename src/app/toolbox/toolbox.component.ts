@@ -21,16 +21,35 @@ export class ToolboxComponent implements OnInit {
   showError = false;
   showSuccess = false;
 
+  /*
   x = 0;
   y = 0;
   z = 0;
+  */
   m = 0;
 
-  toolboxVoxel: any;
-
-  get selectedVoxel() {
-    return Engine.selectedVoxel;
+  get x() {
+    return Engine.selectedVoxel.position.x;
   }
+  get y() {
+    return Engine.selectedVoxel.position.y;
+  }
+  get z() {
+    return Engine.selectedVoxel.position.z;
+  }
+
+  set x(v) {
+    Engine.selectedVoxel.position.x = v;
+  }
+  set y(v) {
+    Engine.selectedVoxel.position.y = v;
+  }
+  set z(v) {
+    Engine.selectedVoxel.position.z = v;
+  }
+
+
+  toolboxVoxel: any;
 
   ngOnInit() {
     this.spawnToolboxVoxel();
@@ -45,7 +64,8 @@ export class ToolboxComponent implements OnInit {
 
   validUint8(numbers: number[]) {
     for (const n of numbers) {
-      if (!(n > -1 && Number.isInteger(n))) {
+      if (!(n > -1 && Number.isInteger(n) && n < 256)) {
+        console.log(n, Number.isInteger(n), typeof n);
         return false;
       }
     }
@@ -65,19 +85,24 @@ export class ToolboxComponent implements OnInit {
   }
 
   spawnToolboxVoxel() {
-    const mat = new THREE.MeshBasicMaterial({ color: 0xFF00FF });
+    const mat = new THREE.MeshLambertMaterial({ color: 0xFFFFF });
     mat.transparent = true;
     mat.opacity = 0;
     this.toolboxVoxel = new THREE.Mesh(Engine.geometry, mat);
     Engine.scene.add(this.toolboxVoxel);
     this.toolboxVoxel.position.set(0, 0, 0);
+    Engine.selectedVoxel = this.toolboxVoxel;
   }
 
   updateToolboxVoxel(x: number, y: number, z: number, material: number) {
     this.toolboxVoxel.position.set(x, y, z);
     this.toolboxVoxel.material.color.setHex(this.contractService.colorArray[material]);
     this.toolboxVoxel.material.opacity = 1;
-    Engine.camera.position.set(x, y, z);
+    // Engine.camera.position.set(x, y, z);
+  }
+
+  checkOwnership(owner: string): boolean {
+    return this.contractService.getUserAccount() === owner;
   }
 
   placeVoxel(x: number, y: number, z: number, material: number) {
@@ -85,8 +110,7 @@ export class ToolboxComponent implements OnInit {
       this.error('There is already a voxel there.');
       return;
     }
-    if (!(x < 64 && y < 64 && z < 64 && material < 16)
-      && !this.validUint8([x, y, z, material])) {
+    if (!(x < 64 && y < 64 && z < 64 && material < 16) || !this.validUint8([x, y, z, material])) {
       this.error('Wrong parameters.');
       return;
     }
@@ -98,9 +122,14 @@ export class ToolboxComponent implements OnInit {
       }
     });
   }
+
   destroyVoxel(x: number, y: number, z: number) {
-    if (!(x < 64 && y < 64 && z < 64) && !this.validUint8([x, y, z])) {
+    if (!(x < 64 && y < 64 && z < 64) || !this.validUint8([x, y, z])) {
       this.error('Wrong parameters.');
+      return;
+    }
+    if (!this.checkOwnership(Engine.world[Engine.getVoxelKey(x, y, z)].ownerAddress)) {
+      this.error('You don\'t own that voxel.');
       return;
     }
     this.contractService.destroyVoxel(x, y, z, (e) => {
@@ -111,10 +140,14 @@ export class ToolboxComponent implements OnInit {
       }
     });
   }
+
   repaintVoxel(x: number, y: number, z: number, newMaterial: number) {
-    if (!(x < 64 && y < 64 && z < 64 && newMaterial < 16)
-    && !this.validUint8([x, y, z, newMaterial])) {
+    if (!(x < 64 && y < 64 && z < 64 && newMaterial < 16) || !this.validUint8([x, y, z, newMaterial])) {
       this.error('Wrong parameters.');
+      return;
+    }
+    if (!this.checkOwnership(Engine.world[Engine.getVoxelKey(x, y, z)].ownerAddress)) {
+      this.error('You don\'t own that voxel.');
       return;
     }
     this.contractService.repaintVoxel(x, y, z, newMaterial, (e) => {
@@ -125,9 +158,14 @@ export class ToolboxComponent implements OnInit {
       }
     });
   }
+
   transferVoxel(to: string, x: number, y: number, z: number) {
-    if (!(x < 64 && y < 64 && z < 64 && to) && !this.validUint8([x, y, z])) {
+    if (!(x < 64 && y < 64 && z < 64 && to) || !this.validUint8([x, y, z])) {
       this.error('Wrong parameters.');
+      return;
+    }
+    if (!this.checkOwnership(Engine.world[Engine.getVoxelKey(x, y, z)].ownerAddress)) {
+      this.error('You don\'t own that voxel.');
       return;
     }
     this.contractService.transferVoxel(to, x, y, z, (e) => {
