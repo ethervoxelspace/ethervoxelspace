@@ -99,6 +99,9 @@ export class PlaceExplorerComponent implements OnInit {
         if (event.event === 'VoxelDestroyed') {
           this.destroyVoxelInScene(event.args.x, event.args.y, event.args.z);
         }
+        if (event.event === 'VoxelTransfered') {
+          this.transferVoxelInScene(event.args.to, event.args.x, event.args.y, event.args.z);
+        }
       }
     });
   }

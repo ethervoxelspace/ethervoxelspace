@@ -74,17 +74,23 @@ export class ContractService {
   getWorldFromPastEvents(callback) {
     this.contract.VoxelPlaced({}, { fromBlock: 0, toBlock: 'latest' }).get((errorPlaced, eventResultPlaced) => {
       if (errorPlaced) {
-        console.log(errorPlaced);
+        console.error(errorPlaced);
       } else {
         this.contract.VoxelRepainted({}, { fromBlock: 0, toBlock: 'latest' }).get((errorRepainted, eventResultRepainted) => {
           if (errorRepainted) {
-            console.log(errorRepainted);
+            console.error(errorRepainted);
           } else {
             this.contract.VoxelDestroyed({}, { fromBlock: 0, toBlock: 'latest' }).get((errorDestroyed, eventResultDestroyed) => {
               if (errorDestroyed) {
-                console.log(errorDestroyed);
+                console.error(errorDestroyed);
               } else {
-                callback(eventResultPlaced.concat(eventResultRepainted).concat(eventResultDestroyed));
+                this.contract.VoxelTransfered({}, { fromBlock: 0, toBlock: 'latest' }).get((errorTransfered, eventResultTransfered) => {
+                  if (errorDestroyed) {
+                    console.error(errorTransfered);
+                  } else {
+                    callback(eventResultPlaced.concat(eventResultRepainted).concat(eventResultDestroyed).concat(eventResultTransfered));
+                  }
+                });
               }
             });
           }
