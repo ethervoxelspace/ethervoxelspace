@@ -1,5 +1,88 @@
 export const ABI = [
 	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "x",
+				"type": "uint8"
+			},
+			{
+				"name": "y",
+				"type": "uint8"
+			},
+			{
+				"name": "z",
+				"type": "uint8"
+			}
+		],
+		"name": "destroyVoxel",
+		"outputs": [],
+		"payable": true,
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [],
+		"name": "withdraw",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "x",
+				"type": "uint8"
+			},
+			{
+				"name": "y",
+				"type": "uint8"
+			},
+			{
+				"name": "z",
+				"type": "uint8"
+			},
+			{
+				"name": "material",
+				"type": "uint8"
+			}
+		],
+		"name": "placeVoxel",
+		"outputs": [],
+		"payable": true,
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "to",
+				"type": "address"
+			},
+			{
+				"name": "x",
+				"type": "uint8"
+			},
+			{
+				"name": "y",
+				"type": "uint8"
+			},
+			{
+				"name": "z",
+				"type": "uint8"
+			}
+		],
+		"name": "transferVoxel",
+		"outputs": [],
+		"payable": true,
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
 		"constant": true,
 		"inputs": [
 			{
@@ -44,12 +127,16 @@ export const ABI = [
 			{
 				"name": "z",
 				"type": "uint8"
+			},
+			{
+				"name": "newMaterial",
+				"type": "uint8"
 			}
 		],
-		"name": "destroyVoxel",
+		"name": "repaintVoxel",
 		"outputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
+		"payable": true,
+		"stateMutability": "payable",
 		"type": "function"
 	},
 	{
@@ -63,26 +150,9 @@ export const ABI = [
 		"inputs": [
 			{
 				"indexed": false,
-				"name": "x",
-				"type": "uint8"
+				"name": "owner",
+				"type": "address"
 			},
-			{
-				"indexed": false,
-				"name": "y",
-				"type": "uint8"
-			},
-			{
-				"indexed": false,
-				"name": "z",
-				"type": "uint8"
-			}
-		],
-		"name": "VoxelDestroyed",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
 			{
 				"indexed": false,
 				"name": "x",
@@ -127,16 +197,33 @@ export const ABI = [
 			},
 			{
 				"indexed": false,
-				"name": "oldMaterial",
-				"type": "uint8"
-			},
-			{
-				"indexed": false,
 				"name": "newMaterial",
 				"type": "uint8"
 			}
 		],
 		"name": "VoxelRepainted",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"name": "x",
+				"type": "uint8"
+			},
+			{
+				"indexed": false,
+				"name": "y",
+				"type": "uint8"
+			},
+			{
+				"indexed": false,
+				"name": "z",
+				"type": "uint8"
+			}
+		],
+		"name": "VoxelDestroyed",
 		"type": "event"
 	},
 	{
@@ -165,92 +252,5 @@ export const ABI = [
 		],
 		"name": "VoxelTransfered",
 		"type": "event"
-	},
-	{
-		"constant": false,
-		"inputs": [],
-		"name": "withdraw",
-		"outputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"name": "x",
-				"type": "uint8"
-			},
-			{
-				"name": "y",
-				"type": "uint8"
-			},
-			{
-				"name": "z",
-				"type": "uint8"
-			},
-			{
-				"name": "material",
-				"type": "uint8"
-			}
-		],
-		"name": "placeVoxel",
-		"outputs": [],
-		"payable": true,
-		"stateMutability": "payable",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"name": "x",
-				"type": "uint8"
-			},
-			{
-				"name": "y",
-				"type": "uint8"
-			},
-			{
-				"name": "z",
-				"type": "uint8"
-			},
-			{
-				"name": "newMaterial",
-				"type": "uint8"
-			}
-		],
-		"name": "repaintVoxel",
-		"outputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"name": "to",
-				"type": "address"
-			},
-			{
-				"name": "x",
-				"type": "uint8"
-			},
-			{
-				"name": "y",
-				"type": "uint8"
-			},
-			{
-				"name": "z",
-				"type": "uint8"
-			}
-		],
-		"name": "transferVoxel",
-		"outputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
 	}
 ];

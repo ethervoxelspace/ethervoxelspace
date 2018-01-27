@@ -10,7 +10,7 @@ export class ContractService {
   private web3;
 
   private price = web3.toWei(0.0001, 'ether');
-  private contractAddress = '0x2CC25bDaBD264aB306d47938F3c701A6dF0e883A';
+  private contractAddress = '0xEdC3C30b481ad5B349456Db16d469A960e9bCCB0';
 
   public colorArray = [
     0x000000,
