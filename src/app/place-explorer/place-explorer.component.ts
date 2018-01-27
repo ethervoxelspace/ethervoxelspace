@@ -14,7 +14,7 @@ export class PlaceExplorerComponent implements OnInit {
   ngOnInit() {
     Engine.initialize();
 
-    //this.populateMockWorld();
+    // this.populateMockWorld();
     this.populateWorldUsingPastEvents();
 
     this.setUpWatchers();
@@ -26,7 +26,7 @@ export class PlaceExplorerComponent implements OnInit {
         console.log('EVENT ERROR');
         return;
       }
-      console.log("EVENT - VOXEL PLACED: ", response);
+      console.log('EVENT - VOXEL PLACED: ', response);
       this.spawnVoxelInScene(response.args.x, response.args.y, response.args.z, response.args.material);
     });
     this.contractService.VoxelRepaintedEvent().watch((error, response) => {
@@ -34,7 +34,7 @@ export class PlaceExplorerComponent implements OnInit {
         console.log('EVENT ERROR');
         return;
       }
-      console.log("EVENT - VOXEL REPAINTED: ", response);
+      console.log('EVENT - VOXEL REPAINTED: ', response);
       this.repaintVoxelInScene(response.args.x, response.args.y, response.args.z, response.args.oldMaterial, response.args.newMaterial);
     });
     this.contractService.VoxelDestroyedEvent().watch((error, response) => {
@@ -42,7 +42,7 @@ export class PlaceExplorerComponent implements OnInit {
         console.log('EVENT ERROR');
         return;
       }
-      console.log("EVENT - VOXEL DESTROYED: ", response);
+      console.log('EVENT - VOXEL DESTROYED: ', response);
       this.destroyVoxelInScene(response.args.x, response.args.y, response.args.z);
     });
     this.contractService.VoxelTransferredEvent().watch((error, response) => {
@@ -50,7 +50,7 @@ export class PlaceExplorerComponent implements OnInit {
         console.log('EVENT ERROR');
         return;
       }
-      console.log("EVENT - VOXEL TRANSFERRED: ", response);
+      console.log('EVENT - VOXEL TRANSFERRED: ', response);
       this.transferVoxelInScene(response.args.to, response.args.x, response.args.y, response.args.z);
     });
   }
@@ -66,13 +66,15 @@ export class PlaceExplorerComponent implements OnInit {
   }
 
   spawnVoxelInScene(x, y, z, material) {
-    if(material > 15){
+    if (material > 15) {
       material = 0;
     }
     const mat = new THREE.MeshLambertMaterial({ color: this.contractService.colorArray[material] });
     const voxel = new THREE.Mesh(Engine.geometry, mat);
     Engine.scene.add(voxel);
     voxel.position.set(x, y, z);
+    // TODO: set voxel owner address
+    // voxel.ownerAddress = ...
     Engine.world[Engine.getVoxelKey(x, y, z)] = voxel; // {v: voxel, o:};
   }
 
@@ -93,13 +95,13 @@ export class PlaceExplorerComponent implements OnInit {
   populateWorldUsingPastEvents() {
     this.contractService.getWorldFromPastEvents((events) => {
       for (const event of events) {
-        if (event.event === "VoxelPlaced") {
+        if (event.event === 'VoxelPlaced') {
           this.spawnVoxelInScene(event.args.x, event.args.y, event.args.z, event.args.material);
         }
-        if (event.event === "VoxelRepainted") {
+        if (event.event === 'VoxelRepainted') {
           this.repaintVoxelInScene(event.args.x, event.args.y, event.args.z, event.args.oldMaterial, event.args.newMaterial);
         }
-        if (event.event === "VoxelDestroyed") {
+        if (event.event === 'VoxelDestroyed') {
           this.destroyVoxelInScene(event.args.x, event.args.y, event.args.z);
         }
       }

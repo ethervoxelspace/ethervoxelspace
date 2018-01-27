@@ -21,9 +21,16 @@ export class ToolboxComponent implements OnInit {
   showError = false;
   showSuccess = false;
 
+  x = 0;
+  y = 0;
+  z = 0;
   m = 0;
 
   toolboxVoxel: any;
+
+  get selectedVoxel() {
+    return Engine.selectedVoxel;
+  }
 
   ngOnInit() {
     this.spawnToolboxVoxel();
@@ -92,10 +99,6 @@ export class ToolboxComponent implements OnInit {
     });
   }
   destroyVoxel(x: number, y: number, z: number) {
-    if (Engine.world[Engine.getVoxelKey(x, y, z)]) {
-      this.error('There is already a voxel there.');
-      return;
-    }
     if (!(x < 64 && y < 64 && z < 64) && !this.validUint8([x, y, z])) {
       this.error('Wrong parameters.');
       return;
