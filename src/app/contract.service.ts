@@ -39,6 +39,7 @@ export class ContractService {
   injectWeb3Provider() {
     // Checking if Web3 has been injected by the browser (Mist/MetaMask)
     if (typeof web3 !== 'undefined') {
+      // web3/index.d.ts 'export' -> '='
       this.web3 = new Web3(Web3.givenProvider);
       this.contract = new this.web3.eth.Contract(ABI, this.contractAddress, {
         from: this.getUserAccount()
@@ -65,8 +66,8 @@ export class ContractService {
 
 
   getUserAccount(): string {
-    // return this.web3.eth.accounts.wallet[0];
-    return '0x3EdddF14E23288fE0a4989456f533088C00e0865';
+    return this.web3.eth.accounts.wallet[0];
+    // return '0x3EdddF14E23288fE0a4989456f533088C00e0865';
   }
 
   getWorldFromPastEvents(callback) {
