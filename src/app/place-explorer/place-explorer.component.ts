@@ -14,7 +14,6 @@ export class PlaceExplorerComponent implements OnInit {
   ngOnInit() {
     Engine.initialize();
 
-    // this.populateMockWorld();
     this.populateWorldUsingPastEvents();
 
     this.setUpWatchers();
@@ -23,45 +22,28 @@ export class PlaceExplorerComponent implements OnInit {
   setUpWatchers() {
     this.contractService.VoxelPlacedEvent()
     .on('data', function(event) {
-        console.log(event);
         const args = event.returnValues;
         this.spawnVoxelInScene(args.owner, args.x, args.y, args.z, args.material);
-    })
-    .on('error', console.error);
+    }).on('error', console.error);
 
-    /*
-    this.contractService.VoxelRepaintedEvent().watch((error, response) => {
-      if (error) {
-        console.error('EVENT ERROR');
-        return;
-      }
-      this.repaintVoxelInScene(response.args.x, response.args.y, response.args.z, response.args.newMaterial);
-    });
-    this.contractService.VoxelDestroyedEvent().watch((error, response) => {
-      if (error) {
-        console.error('EVENT ERROR');
-        return;
-      }
-      this.destroyVoxelInScene(response.args.x, response.args.y, response.args.z);
-    });
-    this.contractService.VoxelTransferredEvent().watch((error, response) => {
-      if (error) {
-        console.error('EVENT ERROR');
-        return;
-      }
-      this.transferVoxelInScene(response.args.to, response.args.x, response.args.y, response.args.z);
-    });
-    */
-  }
+    this.contractService.VoxelRepaintedEvent()
+    .on('data', function(event) {
+      const args = event.returnValues;
+      this.repaintVoxelInScene(args.x, args.y, args.z, args.newMaterial);
+    }).on('error', console.error);
 
-  populateMockWorld() {
-    for (let x = 0; x < 16; x++) {
-      for (let y = 0; y < 16; y++) {
-        for (let z = 0; z < 16; z++) {
-          this.spawnVoxelInScene('', x, y, z, 0);
-        }
-      }
-    }
+    this.contractService.VoxelDestroyedEvent()
+    .on('data', function(event) {
+      const args = event.returnValues;
+      this.destroyVoxelInScene(args.x, args.y, args.z);
+    }).on('error', console.error);
+
+    this.contractService.VoxelTransferredEvent()
+    .on('data', function(event) {
+      const args = event.returnValues;
+      this.transferVoxelInScene(args.to, args.x, args.y, args.z);
+    }).on('error', console.error);
+
   }
 
   spawnVoxelInScene(owner, x, y, z, material) {
@@ -82,8 +64,8 @@ export class PlaceExplorerComponent implements OnInit {
   }
 
   repaintVoxelInScene(x, y, z, newMaterial) {
-    this.destroyVoxelInScene(x, y, z);
-    this.spawnVoxelInScene(Engine.world[Engine.getVoxelKey(x, y, z)].owner, x, y, z, newMaterial);
+    Engine.world[Engine.getVoxelKey(x, y, z)]
+    .material.color.setHex(this.contractService.colorArray[newMaterial]);
   }
 
   transferVoxelInScene(to, x, y, z) {
@@ -93,17 +75,18 @@ export class PlaceExplorerComponent implements OnInit {
   populateWorldUsingPastEvents() {
     this.contractService.getWorldFromPastEvents((events) => {
       for (const event of events) {
+        const args = event.returnValues;
         if (event.event === 'VoxelPlaced') {
-          this.spawnVoxelInScene(event.args.owner, event.args.x, event.args.y, event.args.z, event.args.material);
+          this.spawnVoxelInScene(args.owner, args.x, args.y, args.z, args.material);
         }
         if (event.event === 'VoxelRepainted') {
-          this.repaintVoxelInScene(event.args.x, event.args.y, event.args.z, event.args.newMaterial);
+          this.repaintVoxelInScene(args.x, args.y, args.z, args.newMaterial);
         }
         if (event.event === 'VoxelDestroyed') {
-          this.destroyVoxelInScene(event.args.x, event.args.y, event.args.z);
+          this.destroyVoxelInScene(args.x, args.y, args.z);
         }
         if (event.event === 'VoxelTransfered') {
-          this.transferVoxelInScene(event.args.to, event.args.x, event.args.y, event.args.z);
+          this.transferVoxelInScene(args.to, args.x, args.y, args.z);
         }
       }
     });
