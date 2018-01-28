@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import * as Web3 from 'web3';
+// import Web3 from 'web3';
 import { ABI } from './ABI';
 
 @Injectable()
@@ -10,7 +10,7 @@ export class ContractService {
   private web3;
 
   private price = web3.toWei(0.0001, 'ether');
-  private contractAddress = '0xEdC3C30b481ad5B349456Db16d469A960e9bCCB0';
+  private contractAddress = '0x202cF3B3a1dBAFafB342079aE19eF531907D7EAF';
 
   public colorArray = [
     0x000000,
@@ -35,8 +35,8 @@ export class ContractService {
     // Checking if Web3 has been injected by the browser (Mist/MetaMask)
     if (typeof web3 !== 'undefined') {
       // Use the browser's ethereum provider
-      this.provider = web3.currentProvider;
-      this.web3 = new Web3(web3.currentProvider);
+      // this.provider = web3.currentProvider;
+      this.web3 = web3; // new Web3(web3.currentProvider);
       this.contract = this.web3.eth.contract(ABI).at(this.contractAddress);
 
     } else {
