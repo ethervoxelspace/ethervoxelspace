@@ -21,13 +21,15 @@ export class PlaceExplorerComponent implements OnInit {
   }
 
   setUpWatchers() {
-    this.contractService.VoxelPlacedEvent().watch((error, response) => {
-      if (error) {
-        console.error('EVENT ERROR');
-        return;
-      }
-      this.spawnVoxelInScene(response.args.owner, response.args.x, response.args.y, response.args.z, response.args.material);
-    });
+    this.contractService.VoxelPlacedEvent()
+    .on('data', function(event) {
+        console.log(event);
+        const args = event.returnValues;
+        this.spawnVoxelInScene(args.owner, args.x, args.y, args.z, args.material);
+    })
+    .on('error', console.error);
+
+    /*
     this.contractService.VoxelRepaintedEvent().watch((error, response) => {
       if (error) {
         console.error('EVENT ERROR');
@@ -49,6 +51,7 @@ export class PlaceExplorerComponent implements OnInit {
       }
       this.transferVoxelInScene(response.args.to, response.args.x, response.args.y, response.args.z);
     });
+    */
   }
 
   populateMockWorld() {
