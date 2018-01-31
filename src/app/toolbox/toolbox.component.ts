@@ -110,7 +110,7 @@ export class ToolboxComponent implements OnInit {
   }
 
   checkOwnership(owner: string): boolean {
-    return this.contractService.getUserAccount() === owner;
+    return this.contractService.userAddress === owner;
   }
 
   checkVoxelExists(x, y, z) {
@@ -132,7 +132,7 @@ export class ToolboxComponent implements OnInit {
     this.contractService.placeVoxel(x, y, z, material, (e) => {
       this.hideToolboxVoxel();
       if (e) {
-        this.error('Error. Voxel has not been placed on the blockchain.');
+        this.error('Error. Voxel has not been placed on the blockchain. Error: ' + e);
       } else {
         this.success('Voxel has been successfuly placed on the blockchain.');
       }
@@ -150,7 +150,7 @@ export class ToolboxComponent implements OnInit {
     }
     this.contractService.destroyVoxel(x, y, z, (e) => {
       if (e) {
-        this.error('Error. Voxel has not been removed from the blockchain.');
+        this.error('Error. Voxel has not been removed from the blockchain. Error: ' + e);
       } else {
         this.success('Voxel has been successfuly removed from the blockchain.');
       }
@@ -168,7 +168,7 @@ export class ToolboxComponent implements OnInit {
     }
     this.contractService.repaintVoxel(x, y, z, newMaterial, (e) => {
       if (e) {
-        this.error('Error. Voxel has not been repainted on the blockchain.');
+        this.error('Error. Voxel has not been repainted on the blockchain. Error: ' + e);
       } else {
         this.success('Voxel has been successfuly repainted on the blockchain.');
       }
@@ -186,7 +186,7 @@ export class ToolboxComponent implements OnInit {
     }
     this.contractService.transferVoxel(to, x, y, z, (e) => {
       if (e) {
-        this.error('Error. Voxel has not been transferred on the blockchain.');
+        this.error('Error. Voxel has not been transferred on the blockchain. Error: ' + e);
       } else {
         this.success('Voxel has been successfuly transferred on the blockchain.');
       }

@@ -41,33 +41,36 @@ export class ContractService {
     if (typeof web3 !== 'undefined') {
       // web3/index.d.ts 'export' -> '='
       this.web3 = new Web3(Web3.givenProvider);
-      this.contract = new this.web3.eth.Contract(ABI, this.contractAddress, {
-        from: this.getUserAccount()
-      });
+      
       this.price = this.web3.utils.toWei('0.0001', 'ether');
+      
+      this.web3.eth.getAccounts().then(accounts => {
+        this.web3.eth.defaultAccount = accounts[0];
+
+        this.contract = new this.web3.eth.Contract(ABI, this.contractAddress, { from: accounts[0] });
+      });
+      
     } else {
       console.log('No web3? You should consider trying MetaMask!');
     }
   }
 
+  get userAddress(): string {
+    return this.web3.eth.defaultAccount;
+  }
+
 
   public VoxelPlacedEvent() {
-    return this.contract.events.VoxelPlaced();
+    return this.contract.events.VoxelPlaced({ fromBlock: 'latest' });
   }
   public VoxelRepaintedEvent() {
-    return this.contract.events.VoxelRepainted();
+    return this.contract.events.VoxelRepainted({ fromBlock: 'latest' });
   }
   public VoxelDestroyedEvent() {
-    return this.contract.events.VoxelDestroyed();
+    return this.contract.events.VoxelDestroyed({ fromBlock: 'latest' });
   }
   public VoxelTransferredEvent() {
-    return this.contract.events.VoxelTransfered();
-  }
-
-
-  getUserAccount(): string {
-    return this.web3.eth.accounts.wallet[0];
-    // return '0x3EdddF14E23288fE0a4989456f533088C00e0865';
+    return this.contract.events.VoxelTransfered({ fromBlock: 'latest' });
   }
 
   getWorldFromPastEvents(callback) {
@@ -80,24 +83,24 @@ export class ContractService {
   }
 
   placeVoxel(x, y, z, m, cb) {
-    this.contract.methods.placeVoxel(x, y, z, m).send({value: this.price})
-    .then(function (receipt) { cb(); })
-    .catch((e) => { cb(e); });
+    this.contract.methods.placeVoxel(x, y, z, m).send({ value: this.price })
+      .then(function (receipt) { cb(); })
+      .catch((e) => { cb(e); });
   }
   destroyVoxel(x, y, z, cb) {
-    this.contract.methods.destroyVoxel(x, y, z).send({value: this.price})
-    .then(function (receipt) { cb(); })
-    .catch((e) => { cb(e); });
+    this.contract.methods.destroyVoxel(x, y, z).send({ value: this.price })
+      .then(function (receipt) { cb(); })
+      .catch((e) => { cb(e); });
   }
   repaintVoxel(x, y, z, newMatarial, cb) {
-    this.contract.methods.repaintVoxel(x, y, z, newMatarial).send({value: this.price})
-    .then(function (receipt) { cb(); })
-    .catch((e) => { cb(e); });
+    this.contract.methods.repaintVoxel(x, y, z, newMatarial).send({ value: this.price })
+      .then(function (receipt) { cb(); })
+      .catch((e) => { cb(e); });
   }
   transferVoxel(to, x, y, z, cb) {
-    this.contract.methods.transferVoxel(to, x, y, z).send({value: this.price})
-    .then(function (receipt) { cb(); })
-    .catch((e) => { cb(e); });
+    this.contract.methods.transferVoxel(to, x, y, z).send({ value: this.price })
+      .then(function (receipt) { cb(); })
+      .catch((e) => { cb(e); });
   }
 
 }

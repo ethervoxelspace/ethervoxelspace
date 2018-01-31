@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ContractService } from '../contract.service';
 import { Engine } from '../engine';
+import { setInterval } from 'timers';
 
 @Component({
   selector: 'app-place-explorer',
@@ -14,9 +15,14 @@ export class PlaceExplorerComponent implements OnInit {
   ngOnInit() {
     Engine.initialize();
 
-    this.populateWorldUsingPastEvents();
+    // TODO FIXME
+    // contract loaded promise
+    setTimeout(()=>{
+      this.populateWorldUsingPastEvents();
 
-    this.setUpWatchers();
+      this.setUpWatchers();
+    }, 1000);
+
   }
 
   setUpWatchers() {
