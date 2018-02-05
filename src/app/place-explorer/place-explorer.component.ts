@@ -10,21 +10,24 @@ import { setInterval } from 'timers';
 })
 export class PlaceExplorerComponent implements OnInit {
 
+  lastUpdateBlock = 0;
+  updateInterval = 5000;
+
   constructor(private contractService: ContractService) { }
 
-  ngOnInit() {
+  async ngOnInit() {
     Engine.initialize();
 
-    // TODO FIXME
-    // contract loaded promise
-    setTimeout(()=>{
-      this.populateWorldUsingPastEvents();
+    await this.contractService.injectWeb3Provider();
 
-      this.setUpWatchers();
-    }, 1000);
+    this.updateWorldUsingPastEvents();
 
+    window.setInterval(() => {
+      this.updateWorldUsingPastEvents();
+    }, this.updateInterval);
   }
 
+  /*
   setUpWatchers() {
     this.contractService.VoxelPlacedEvent()
     .on('data', function(event) {
@@ -51,6 +54,7 @@ export class PlaceExplorerComponent implements OnInit {
     }).on('error', console.error);
 
   }
+  */
 
   spawnVoxelInScene(owner, x, y, z, material) {
     if (material > 15) {
@@ -78,8 +82,8 @@ export class PlaceExplorerComponent implements OnInit {
     Engine.world[Engine.getVoxelKey(x, y, z)].owner = to;
   }
 
-  populateWorldUsingPastEvents() {
-    this.contractService.getWorldFromPastEvents((events) => {
+  updateWorldUsingPastEvents() {
+    this.contractService.getPastEvents(this.lastUpdateBlock, (events) => {
       for (const event of events) {
         const args = event.returnValues;
         if (event.event === 'VoxelPlaced') {
@@ -95,6 +99,9 @@ export class PlaceExplorerComponent implements OnInit {
           this.transferVoxelInScene(args.to, args.x, args.y, args.z);
         }
       }
+      this.contractService.getCurrentBlock().then(currentBlock => {
+        this.lastUpdateBlock = currentBlock;
+      });
     });
   }
 }

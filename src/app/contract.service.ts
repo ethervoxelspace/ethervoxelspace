@@ -32,34 +32,46 @@ export class ContractService {
   ];
 
   constructor() {
-    this.injectWeb3Provider();
+    // this.injectWeb3Provider();
   }
 
 
-  injectWeb3Provider() {
+  injectWeb3Provider(): Promise<boolean> {
     // Checking if Web3 has been injected by the browser (Mist/MetaMask)
-    if (typeof web3 !== 'undefined') {
-      // web3/index.d.ts 'export' -> '='
-      this.web3 = new Web3(Web3.givenProvider);
-      
-      this.price = this.web3.utils.toWei('0.0001', 'ether');
-      
-      this.web3.eth.getAccounts().then(accounts => {
-        this.web3.eth.defaultAccount = accounts[0];
+    return new Promise<boolean>((resolve, reject) => {
+      if (typeof web3 !== 'undefined') {
+        // web3/index.d.ts 'export' -> '='
+        this.web3 = new Web3(Web3.givenProvider);
 
-        this.contract = new this.web3.eth.Contract(ABI, this.contractAddress, { from: accounts[0] });
-      });
-      
-    } else {
-      console.log('No web3? You should consider trying MetaMask!');
-    }
+        this.price = this.web3.utils.toWei('0.0001', 'ether');
+
+        this.web3.eth.getAccounts().then(accounts => {
+          this.web3.eth.defaultAccount = accounts[0];
+          this.contract = new this.web3.eth.Contract(ABI, this.contractAddress, { from: accounts[0] });
+          resolve(true);
+        });
+
+      } else {
+        console.log('No web3? You should consider trying MetaMask!');
+        reject(false);
+      }
+    });
+
   }
 
   get userAddress(): string {
     return this.web3.eth.defaultAccount;
   }
 
+  getCurrentBlock(): Promise<number> {
+    return new Promise<number>((resolve, reject) => {
+      this.web3.eth.getBlockNumber()
+      .then(resolve)
+      .catch(reject);
+    });
+  }
 
+  /*
   public VoxelPlacedEvent() {
     return this.contract.events.VoxelPlaced({ fromBlock: 'latest' });
   }
@@ -72,10 +84,11 @@ export class ContractService {
   public VoxelTransferredEvent() {
     return this.contract.events.VoxelTransfered({ fromBlock: 'latest' });
   }
+  */
 
-  getWorldFromPastEvents(callback) {
+  getPastEvents(fromBlock: number, callback: (events: any[]) => void) {
     this.contract.getPastEvents('allEvents', {
-      fromBlock: 0,
+      fromBlock: fromBlock,
       toBlock: 'latest'
     }, (error, allPastEvents) => {
       callback(allPastEvents);
