@@ -6,6 +6,7 @@ export class Engine {
     static camera;
     static world;
     static selectedVoxel;
+    static controls;
 
     constructor() {}
 
@@ -28,8 +29,8 @@ export class Engine {
         Engine.camera = new THREE.PerspectiveCamera(45, rendererWidth / rendererHeight, 1, 10000);
         Engine.camera.position.set(32, 32, 32);
 
-        const controls = new THREE.OrbitControls(Engine.camera, rendererElement);
-        controls.zoomSpeed = 2.0;
+        Engine.controls = new THREE.OrbitControls(Engine.camera, rendererElement);
+        Engine.controls.zoomSpeed = 2.0;
 
         const environment_skybox = new THREE.CubeTextureLoader()
             .setPath('assets/skybox/')

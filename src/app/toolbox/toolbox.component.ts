@@ -105,7 +105,7 @@ export class ToolboxComponent implements OnInit {
     this.toolboxVoxel.position.set(x, y, z);
     this.toolboxVoxel.material.color.setHex(this.contractService.colorArray[material]);
     this.toolboxVoxel.material.opacity = 0.9;
-    // Engine.camera.rotation.set(0,0,0);
+    Engine.controls.reset();
     Engine.camera.position.set(x + 3, y + 3, z + 3);
   }
 
