@@ -29,13 +29,13 @@ export class ToolboxComponent implements OnInit {
   m = 0;
 
   get x() {
-    return Engine.selectedVoxel.position.x;
+    return +(Engine.selectedVoxel.position.x);
   }
   get y() {
-    return Engine.selectedVoxel.position.y;
+    return +(Engine.selectedVoxel.position.y);
   }
   get z() {
-    return Engine.selectedVoxel.position.z;
+    return +(Engine.selectedVoxel.position.z);
   }
 
   set x(v) {
@@ -94,20 +94,35 @@ export class ToolboxComponent implements OnInit {
     Engine.selectedVoxel = this.toolboxVoxel;
   }
 
+  hideToolboxVoxel() {
+    this.toolboxVoxel.material.opacity = 0;
+  }
+
   updateToolboxVoxel(x: number, y: number, z: number, material: number) {
+    if (this.checkVoxelExists(x, y, z)) {
+      return;
+    }
     this.toolboxVoxel.position.set(x, y, z);
     this.toolboxVoxel.material.color.setHex(this.contractService.colorArray[material]);
-    this.toolboxVoxel.material.opacity = 1;
-    // Engine.camera.position.set(x, y, z);
+    this.toolboxVoxel.material.opacity = 0.9;
+    Engine.controls.reset();
+    Engine.camera.position.set(x + 3, y + 3, z + 3);
   }
 
   checkOwnership(owner: string): boolean {
-    return this.contractService.getUserAccount() === owner;
+    return this.contractService.userAddress === owner;
+  }
+
+  checkVoxelExists(x, y, z) {
+    if (Engine.world[Engine.getVoxelKey(x, y, z)]) {
+      this.error('There is already a voxel there.');
+      return true;
+    }
+    return false;
   }
 
   placeVoxel(x: number, y: number, z: number, material: number) {
-    if (Engine.world[Engine.getVoxelKey(x, y, z)]) {
-      this.error('There is already a voxel there.');
+    if (this.checkVoxelExists(x, y, z)) {
       return;
     }
     if (!(x < 64 && y < 64 && z < 64 && material < 16) || !this.validUint8([x, y, z, material])) {
@@ -115,8 +130,9 @@ export class ToolboxComponent implements OnInit {
       return;
     }
     this.contractService.placeVoxel(x, y, z, material, (e) => {
+      this.hideToolboxVoxel();
       if (e) {
-        this.error('Error. Voxel has not been placed on the blockchain.');
+        this.error('Error. Voxel has not been placed on the blockchain. Error: ' + e);
       } else {
         this.success('Voxel has been successfuly placed on the blockchain.');
       }
@@ -134,7 +150,7 @@ export class ToolboxComponent implements OnInit {
     }
     this.contractService.destroyVoxel(x, y, z, (e) => {
       if (e) {
-        this.error('Error. Voxel has not been removed from the blockchain.');
+        this.error('Error. Voxel has not been removed from the blockchain. Error: ' + e);
       } else {
         this.success('Voxel has been successfuly removed from the blockchain.');
       }
@@ -152,7 +168,7 @@ export class ToolboxComponent implements OnInit {
     }
     this.contractService.repaintVoxel(x, y, z, newMaterial, (e) => {
       if (e) {
-        this.error('Error. Voxel has not been repainted on the blockchain.');
+        this.error('Error. Voxel has not been repainted on the blockchain. Error: ' + e);
       } else {
         this.success('Voxel has been successfuly repainted on the blockchain.');
       }
@@ -170,7 +186,7 @@ export class ToolboxComponent implements OnInit {
     }
     this.contractService.transferVoxel(to, x, y, z, (e) => {
       if (e) {
-        this.error('Error. Voxel has not been transferred on the blockchain.');
+        this.error('Error. Voxel has not been transferred on the blockchain. Error: ' + e);
       } else {
         this.success('Voxel has been successfuly transferred on the blockchain.');
       }

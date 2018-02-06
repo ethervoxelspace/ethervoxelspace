@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-// import Web3 from 'web3';
+import Web3 = require('web3');
 import { ABI } from './ABI';
 
 @Injectable()
@@ -9,7 +9,7 @@ export class ContractService {
   private provider;
   private web3;
 
-  private price = web3.toWei(0.0001, 'ether');
+  private price;
   private contractAddress = '0x202cF3B3a1dBAFafB342079aE19eF531907D7EAF';
 
   public colorArray = [
@@ -32,107 +32,88 @@ export class ContractService {
   ];
 
   constructor() {
-    // Checking if Web3 has been injected by the browser (Mist/MetaMask)
-    if (typeof web3 !== 'undefined') {
-      // Use the browser's ethereum provider
-      // this.provider = web3.currentProvider;
-      this.web3 = web3; // new Web3(web3.currentProvider);
-      this.contract = this.web3.eth.contract(ABI).at(this.contractAddress);
-
-    } else {
-      console.log('No web3? You should consider trying MetaMask!');
-    }
+    // this.injectWeb3Provider();
   }
 
+
+  injectWeb3Provider(): Promise<boolean> {
+    // Checking if Web3 has been injected by the browser (Mist/MetaMask)
+    return new Promise<boolean>((resolve, reject) => {
+      if (typeof web3 !== 'undefined') {
+        // web3/index.d.ts 'export' -> '='
+        this.web3 = new Web3(Web3.givenProvider);
+
+        this.price = this.web3.utils.toWei('0.0001', 'ether');
+
+        this.web3.eth.getAccounts().then(accounts => {
+          this.web3.eth.defaultAccount = accounts[0];
+          this.contract = new this.web3.eth.Contract(ABI, this.contractAddress, { from: accounts[0] });
+          resolve(true);
+        });
+
+      } else {
+        console.log('No web3? You should consider trying MetaMask!');
+        reject(false);
+      }
+    });
+
+  }
+
+  get userAddress(): string {
+    return this.web3.eth.defaultAccount;
+  }
+
+  getCurrentBlock(): Promise<number> {
+    return new Promise<number>((resolve, reject) => {
+      this.web3.eth.getBlockNumber()
+      .then(resolve)
+      .catch(reject);
+    });
+  }
+
+  /*
   public VoxelPlacedEvent() {
-    return this.contract.VoxelPlaced();
+    return this.contract.events.VoxelPlaced({ fromBlock: 'latest' });
   }
   public VoxelRepaintedEvent() {
-    return this.contract.VoxelRepainted();
+    return this.contract.events.VoxelRepainted({ fromBlock: 'latest' });
   }
   public VoxelDestroyedEvent() {
-    return this.contract.VoxelDestroyed();
+    return this.contract.events.VoxelDestroyed({ fromBlock: 'latest' });
   }
   public VoxelTransferredEvent() {
-    return this.contract.VoxelTransfered();
+    return this.contract.events.VoxelTransfered({ fromBlock: 'latest' });
   }
+  */
 
-  getUserAccount(): string {
-    return web3.eth.accounts[0];
-  }
-
-  getExistingVoxel(x, y, z, callback) {
-    this.contract.world(x, y, z, (error, result) => {
-      if (result[1] !== '0x0000000000000000000000000000000000000000') {
-        callback(true);
-      } else {
-        callback(false);
-      }
+  getPastEvents(fromBlock: number, callback: (events: any[]) => void) {
+    this.contract.getPastEvents('allEvents', {
+      fromBlock: fromBlock,
+      toBlock: 'latest'
+    }, (error, allPastEvents) => {
+      callback(allPastEvents);
     });
-  }
-
-  getWorldFromPastEvents(callback) {
-    this.contract.VoxelPlaced({}, { fromBlock: 0, toBlock: 'latest' }).get((errorPlaced, eventResultPlaced) => {
-      if (errorPlaced) {
-        console.error(errorPlaced);
-      } else {
-        this.contract.VoxelRepainted({}, { fromBlock: 0, toBlock: 'latest' }).get((errorRepainted, eventResultRepainted) => {
-          if (errorRepainted) {
-            console.error(errorRepainted);
-          } else {
-            this.contract.VoxelDestroyed({}, { fromBlock: 0, toBlock: 'latest' }).get((errorDestroyed, eventResultDestroyed) => {
-              if (errorDestroyed) {
-                console.error(errorDestroyed);
-              } else {
-                this.contract.VoxelTransfered({}, { fromBlock: 0, toBlock: 'latest' }).get((errorTransfered, eventResultTransfered) => {
-                  if (errorDestroyed) {
-                    console.error(errorTransfered);
-                  } else {
-                    callback(eventResultPlaced.concat(eventResultRepainted).concat(eventResultDestroyed).concat(eventResultTransfered));
-                  }
-                });
-              }
-            });
-          }
-        });
-      }
-    });
-
-
   }
 
   placeVoxel(x, y, z, m, cb) {
-    this.contract.placeVoxel(x, y, z, m, {
-      'from': web3.eth.accounts[0],
-      'value': this.price
-    }, (error, result) => {
-      cb(error);
-    });
+    this.contract.methods.placeVoxel(x, y, z, m).send({ value: this.price })
+      .then(function (receipt) { cb(); })
+      .catch((e) => { cb(e); });
   }
   destroyVoxel(x, y, z, cb) {
-    this.contract.destroyVoxel(x, y, z, {
-      'from': web3.eth.accounts[0],
-      'value': this.price
-    }, (error, result) => {
-      cb(error);
-    });
+    this.contract.methods.destroyVoxel(x, y, z).send({ value: this.price })
+      .then(function (receipt) { cb(); })
+      .catch((e) => { cb(e); });
   }
   repaintVoxel(x, y, z, newMatarial, cb) {
-    this.contract.repaintVoxel(x, y, z, newMatarial, {
-      'from': web3.eth.accounts[0],
-      'value': this.price
-    }, (error, result) => {
-      cb(error);
-    });
+    this.contract.methods.repaintVoxel(x, y, z, newMatarial).send({ value: this.price })
+      .then(function (receipt) { cb(); })
+      .catch((e) => { cb(e); });
   }
   transferVoxel(to, x, y, z, cb) {
-    this.contract.repaintVoxel(to, x, y, z, {
-      'from': web3.eth.accounts[0],
-      'value': this.price
-    }, (error, result) => {
-      cb(error);
-    });
+    this.contract.methods.transferVoxel(to, x, y, z).send({ value: this.price })
+      .then(function (receipt) { cb(); })
+      .catch((e) => { cb(e); });
   }
-
 
 }
