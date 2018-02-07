@@ -60,6 +60,14 @@ export class ToolboxComponent implements OnInit {
     if (typeof web3 === 'undefined') {
       this.error('Error. Make sure you have a MetaMask plugin installed.');
     }
+    // TODO FIXME WITH PROMISE/EVENT
+    setTimeout(()=>{
+      if (!this.contractService.userAddress) {
+        console.log(this.contractService.userAddress);
+        this.error('Error. Unlock your MetaMask wallet.');
+      }
+    },1000);
+
   }
 
   validUint8(numbers: number[]) {

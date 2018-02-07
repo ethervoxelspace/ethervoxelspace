@@ -250,7 +250,7 @@ export const ABI = [
 				"type": "uint8"
 			}
 		],
-		"name": "VoxelTransfered",
+		"name": "VoxelTransferred",
 		"type": "event"
 	}
 ];

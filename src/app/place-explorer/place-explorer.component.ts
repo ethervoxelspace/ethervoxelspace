@@ -27,35 +27,6 @@ export class PlaceExplorerComponent implements OnInit {
     }, this.updateInterval);
   }
 
-  /*
-  setUpWatchers() {
-    this.contractService.VoxelPlacedEvent()
-    .on('data', function(event) {
-        const args = event.returnValues;
-        this.spawnVoxelInScene(args.owner, args.x, args.y, args.z, args.material);
-    }).on('error', console.error);
-
-    this.contractService.VoxelRepaintedEvent()
-    .on('data', function(event) {
-      const args = event.returnValues;
-      this.repaintVoxelInScene(args.x, args.y, args.z, args.newMaterial);
-    }).on('error', console.error);
-
-    this.contractService.VoxelDestroyedEvent()
-    .on('data', function(event) {
-      const args = event.returnValues;
-      this.destroyVoxelInScene(args.x, args.y, args.z);
-    }).on('error', console.error);
-
-    this.contractService.VoxelTransferredEvent()
-    .on('data', function(event) {
-      const args = event.returnValues;
-      this.transferVoxelInScene(args.to, args.x, args.y, args.z);
-    }).on('error', console.error);
-
-  }
-  */
-
   spawnVoxelInScene(owner, x, y, z, material) {
     if (material > 15) {
       material = 0;
@@ -95,7 +66,7 @@ export class PlaceExplorerComponent implements OnInit {
         if (event.event === 'VoxelDestroyed') {
           this.destroyVoxelInScene(args.x, args.y, args.z);
         }
-        if (event.event === 'VoxelTransfered') {
+        if (event.event === 'VoxelTransferred') {
           this.transferVoxelInScene(args.to, args.x, args.y, args.z);
         }
       }

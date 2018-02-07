@@ -10,7 +10,7 @@ contract VoxelWorld64 {
     event VoxelPlaced(address owner, uint8 x, uint8 y, uint8 z, uint8 material);
     event VoxelRepainted(uint8 x, uint8 y, uint8 z, uint8 newMaterial);
     event VoxelDestroyed(uint8 x, uint8 y, uint8 z);
-    event VoxelTransfered(address to, uint8 x, uint8 y, uint8 z);
+    event VoxelTransferred(address to, uint8 x, uint8 y, uint8 z);
     
     address creator;
     uint constant PRICE = 1000000000000;
@@ -48,7 +48,7 @@ contract VoxelWorld64 {
     function transferVoxel(address to, uint8 x, uint8 y, uint8 z) payable public {
         require(world[x][y][z].owner == msg.sender && msg.value >= PRICE);
         world[x][y][z].owner = to;
-        VoxelTransfered(to, x, y, z);
+        VoxelTransferred(to, x, y, z);
     }
     
     function withdraw() public {

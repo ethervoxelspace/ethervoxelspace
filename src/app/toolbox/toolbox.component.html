@@ -85,15 +85,14 @@
     <input #to type="text" class="input" />
     <br>
   </div>
-
-  <div *ngIf="showSuccess" class="notification is-success">
+  <div class="notifications">
+    <div *ngIf="showSuccess" class="notification is-success">
       <button (click)="showSuccess = false" class="delete"></button>
       {{successMsg}}
     </div>
-
-  <div *ngIf="showError" class="notification is-danger">
+    <div *ngIf="showError" class="notification is-danger">
       <button (click)="showError = false" class="delete"></button>
       {{errorMsg}}
+    </div>
   </div>
-
 </div>

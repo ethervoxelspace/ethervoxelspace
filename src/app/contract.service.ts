@@ -10,7 +10,7 @@ export class ContractService {
   private web3;
 
   private price;
-  private contractAddress = '0x202cF3B3a1dBAFafB342079aE19eF531907D7EAF';
+  private contractAddress = '0x2Eab1392d6850722d19BEc5738912fbdb021277F';
 
   public colorArray = [
     0x000000,
@@ -70,21 +70,6 @@ export class ContractService {
       .catch(reject);
     });
   }
-
-  /*
-  public VoxelPlacedEvent() {
-    return this.contract.events.VoxelPlaced({ fromBlock: 'latest' });
-  }
-  public VoxelRepaintedEvent() {
-    return this.contract.events.VoxelRepainted({ fromBlock: 'latest' });
-  }
-  public VoxelDestroyedEvent() {
-    return this.contract.events.VoxelDestroyed({ fromBlock: 'latest' });
-  }
-  public VoxelTransferredEvent() {
-    return this.contract.events.VoxelTransfered({ fromBlock: 'latest' });
-  }
-  */
 
   getPastEvents(fromBlock: number, callback: (events: any[]) => void) {
     this.contract.getPastEvents('allEvents', {
