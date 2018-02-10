@@ -27,7 +27,7 @@ export class Engine {
         rendererElement.addEventListener('mousedown', Engine.onRendererClicked, false);
 
         Engine.camera = new THREE.PerspectiveCamera(45, rendererWidth / rendererHeight, 1, 10000);
-        Engine.camera.position.set(128, 128, 128);
+        Engine.camera.position.set(127, 127, 127);
 
         Engine.controls = new THREE.EditorControls(Engine.camera, rendererElement);
 
