@@ -1,7 +1,20 @@
+<section *ngIf="noMetaMask" class="hero is-danger">
+    <div class="hero-body">
+      <div class="container">
+        <h1 class="title">
+          MetaMask Extension not detected.
+        </h1>
+        <h2 class="subtitle">
+          You need <a class="has-text-info" href="https://metamask.io">MetaMask</a> browser plugin to run this decentralized application.
+        </h2>
+      </div>
+    </div>
+  </section>
+
 <header class="level">
   <div class="level-left">  
     <img class="logo" src="assets/cubes.png">
-    <h1>"voxel space" v. 0.1.0</h1>
+    <h1 class="is-size-1">Ether Voxel Space </h1><h2 class="is-size-5">&nbsp;-&nbsp;Let's create a piece of 3d art togETHer.</h2>
   </div>
 </header>
 
@@ -10,22 +23,41 @@
   <app-toolbox></app-toolbox>
 </div>
 
-<div class="whitepaper card content">
+<div class="whitepaper card content column is-two-fifths">
   <h2>White Paper</h2>
-  <p>Here will be listed some core concepts:</p>
+
   <ul>
-    <li>World size is limited to 64x64x64 forever.</li>
+    <li>World size is limited to 256x256x256 forever</li>
+    <li>1 Voxel have it's own x,y,z coordinates (0 to 255), color and owner properties</li>
+    <li>There are 16 available colors</li>
+    <li>Users can perform only 4 types of actions:
+      <ol>
+        <li>place (create) a new voxel in chosen position and color</li>
+        <li>repaint existing owned voxel</li>
+        <li>destroyed owned voxel</li>
+        <li>transfer your voxel's owership to someone else</li>
+      </ol>
+    </li> 
+    <li>The fee for every action is 0.0001 ETH (apart from transaction fees)</li>
+    <li>Contract address: 0x00</li>
+
   </ul>
 </div>
 
 <footer class="footer">
-  <p>Archmage Arispen's Lab, 2018.</p>
-    <!--
-  <div>Icons made by
-    <a href="http://www.freepik.com" title="Freepik">Freepik</a>
-    from
-    <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a> is licensed by
-    <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a>
+  <p><a href="https://twitter.com/bridneus">Archmage Arispen's Lab</a>, 2018.</p>
+  <p>Version 1.0.0</p>
+  <div>
+    <small>
+        <p>Frontend app framework: <a href="https://angular.io/">Angular</a></p>
+        <p>3d rendering engine: <a href="https://threejs.org/">Three.js</a></p>
+        <p>Contract written & deployed with <a href="https://remix.ethereum.org/">Remix</a></p>
+        Logo made by
+        <a href="http://www.freepik.com" title="Freepik">Freepik</a>
+        from
+        <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a> is licensed by
+        <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a>
+    </small>
   </div>
--->
+
 </footer>

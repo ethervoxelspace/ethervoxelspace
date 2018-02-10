@@ -1,6 +1,6 @@
 pragma solidity ^0.4.0;
 
-contract VoxelWorld64 {
+contract VoxelWorld256 {
     
     struct Voxel {
         uint8 material;
@@ -14,14 +14,14 @@ contract VoxelWorld64 {
     
     address creator;
     uint constant PRICE = 1000000000000;
-    Voxel[64][64][64] public world;
+    Voxel[256][256][256] public world;
     
-    function VoxelWorld64() public {
+    function VoxelWorld256() public {
         creator = msg.sender;
     }
     
     function isAvailable(uint8 x, uint8 y, uint8 z) private view returns (bool) {
-        if (x < 64 && y < 64 && z < 64 && world[x][y][z].owner == address(0)) {
+        if (x < 256 && y < 256 && z < 256 && world[x][y][z].owner == address(0)) {
             return true;
         } 
         return false;

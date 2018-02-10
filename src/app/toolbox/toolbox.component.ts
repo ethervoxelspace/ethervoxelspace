@@ -11,6 +11,8 @@ export class ToolboxComponent implements OnInit {
 
   constructor(private contractService: ContractService) { }
 
+  worldSize = 256;
+
   placeMode = true;
   repaintMode = false;
   destroyMode = false;
@@ -58,14 +60,19 @@ export class ToolboxComponent implements OnInit {
 
   checkWeb3() {
     if (typeof web3 === 'undefined') {
-      this.error('Error. Make sure you have a MetaMask plugin installed.');
+      this.error('Error. Make sure you have a MetaMask plugin installed & refresh the page.');
     }
-    // TODO FIXME WITH PROMISE/EVENT
-    setTimeout(()=>{
+
+    setInterval(()=>{
       if (!this.contractService.userAddress) {
         console.log(this.contractService.userAddress);
-        this.error('Error. Unlock your MetaMask wallet.');
+        this.error('Error. Unlock your MetaMask wallet & refresh the page.');
       }
+      this.contractService.getNetwork().then(id => {
+        if(id !== 1) {
+          this.error('Error. You are not on the mainnet.');
+        }
+      })
     },1000);
 
   }
@@ -107,14 +114,15 @@ export class ToolboxComponent implements OnInit {
   }
 
   updateToolboxVoxel(x: number, y: number, z: number, material: number) {
-    if (this.checkVoxelExists(x, y, z)) {
+    if (this.checkVoxelExists(x, y, z) || !this.checkValidCoords(x,y,z)) {
       return;
     }
     this.toolboxVoxel.position.set(x, y, z);
     this.toolboxVoxel.material.color.setHex(this.contractService.colorArray[material]);
     this.toolboxVoxel.material.opacity = 0.9;
-    Engine.controls.reset();
+    
     Engine.camera.position.set(x + 3, y + 3, z + 3);
+    Engine.camera.lookAt(x,y,z);
   }
 
   checkOwnership(owner: string): boolean {
@@ -129,11 +137,15 @@ export class ToolboxComponent implements OnInit {
     return false;
   }
 
+  checkValidCoords(x, y, z) {
+    return x < this.worldSize && y < this.worldSize && z < this.worldSize;
+  }
+
   placeVoxel(x: number, y: number, z: number, material: number) {
     if (this.checkVoxelExists(x, y, z)) {
       return;
     }
-    if (!(x < 64 && y < 64 && z < 64 && material < 16) || !this.validUint8([x, y, z, material])) {
+    if (!(this.checkValidCoords(x,y,z) && material < 16) || !this.validUint8([x, y, z, material])) {
       this.error('Wrong parameters.');
       return;
     }
@@ -148,7 +160,7 @@ export class ToolboxComponent implements OnInit {
   }
 
   destroyVoxel(x: number, y: number, z: number) {
-    if (!(x < 64 && y < 64 && z < 64) || !this.validUint8([x, y, z])) {
+    if (!(this.checkValidCoords(x,y,z)) || !this.validUint8([x, y, z])) {
       this.error('Wrong parameters.');
       return;
     }
@@ -166,7 +178,7 @@ export class ToolboxComponent implements OnInit {
   }
 
   repaintVoxel(x: number, y: number, z: number, newMaterial: number) {
-    if (!(x < 64 && y < 64 && z < 64 && newMaterial < 16) || !this.validUint8([x, y, z, newMaterial])) {
+    if (!(this.checkValidCoords(x,y,z) && newMaterial < 16) || !this.validUint8([x, y, z, newMaterial])) {
       this.error('Wrong parameters.');
       return;
     }
@@ -184,7 +196,7 @@ export class ToolboxComponent implements OnInit {
   }
 
   transferVoxel(to: string, x: number, y: number, z: number) {
-    if (!(x < 64 && y < 64 && z < 64 && to) || !this.validUint8([x, y, z])) {
+    if (!(this.checkValidCoords(x,y,z) && to) || !this.validUint8([x, y, z])) {
       this.error('Wrong parameters.');
       return;
     }

@@ -27,10 +27,9 @@ export class Engine {
         rendererElement.addEventListener('mousedown', Engine.onRendererClicked, false);
 
         Engine.camera = new THREE.PerspectiveCamera(45, rendererWidth / rendererHeight, 1, 10000);
-        Engine.camera.position.set(32, 32, 32);
+        Engine.camera.position.set(128, 128, 128);
 
-        Engine.controls = new THREE.OrbitControls(Engine.camera, rendererElement);
-        Engine.controls.zoomSpeed = 2.0;
+        Engine.controls = new THREE.EditorControls(Engine.camera, rendererElement);
 
         const environment_skybox = new THREE.CubeTextureLoader()
             .setPath('assets/skybox/')
@@ -70,7 +69,9 @@ export class Engine {
     }
 
     static setSelectedVoxel(x, y, z) {
-        Engine.selectedVoxel = Engine.world[Engine.getVoxelKey(x, y, z)].clone();
+        if(Engine.world[Engine.getVoxelKey(x, y, z)]) {
+            Engine.selectedVoxel = Engine.world[Engine.getVoxelKey(x, y, z)].clone();
+        }
     }
 
     static animate() {

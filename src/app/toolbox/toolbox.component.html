@@ -24,7 +24,7 @@
         <label class="label">X</label>
       </div>
       <div class="field-body">
-        <input [(ngModel)]="x" type="number" class="input" />
+        <input [(ngModel)]="x" type="number" class="input" min="0" max="255"/>
       </div>
     </div>
     <div class="field is-horizontal">
@@ -32,7 +32,7 @@
         <label class="label">Y</label>
       </div>
       <div class="field-body">
-        <input [(ngModel)]="y" type="number" class="input" />
+        <input [(ngModel)]="y" type="number" class="input" min="0" max="255"/>
       </div>
     </div>
     <div class="field is-horizontal">
@@ -40,7 +40,7 @@
         <label class="label">Z</label>
       </div>
       <div class="field-body">
-        <input [(ngModel)]="z" type="number" class="input" />
+        <input [(ngModel)]="z" type="number" class="input" min="0" max="255"/>
       </div>
     </div>
   </div>

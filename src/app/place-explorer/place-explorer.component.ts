@@ -11,7 +11,7 @@ import { setInterval } from 'timers';
 export class PlaceExplorerComponent implements OnInit {
 
   lastUpdateBlock = 0;
-  updateInterval = 5000;
+  updateInterval = 1000;
 
   constructor(private contractService: ContractService) { }
 

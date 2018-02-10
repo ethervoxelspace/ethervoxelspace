@@ -10,7 +10,7 @@ export class ContractService {
   private web3;
 
   private price;
-  private contractAddress = '0x2Eab1392d6850722d19BEc5738912fbdb021277F';
+  private contractAddress = '0x6462656c80aE0F79b5A84bfC290C058DcfE7f4E0';
 
   public colorArray = [
     0x000000,
@@ -61,6 +61,12 @@ export class ContractService {
 
   get userAddress(): string {
     return this.web3.eth.defaultAccount;
+  }
+
+  getNetwork(): Promise<number> {
+    return new Promise<number>((resolve, reject) => {
+      this.web3.eth.net.getId().then(resolve).catch(reject);
+    });
   }
 
   getCurrentBlock(): Promise<number> {
