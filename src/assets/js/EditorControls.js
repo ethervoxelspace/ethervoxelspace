@@ -5,14 +5,14 @@
  * @author WestLangley / http://github.com/WestLangley
  */
 
-THREE.EditorControls = function ( object, domElement ) {
+THREE.EditorControls = function ( object, domElement, centerPosition ) {
 
 	domElement = ( domElement !== undefined ) ? domElement : document;
 
 	// API
 
 	this.enabled = true;
-	this.center = new THREE.Vector3();
+	this.center = centerPosition;
 	this.panSpeed = 0.001;
 	this.zoomSpeed = 0.001;
 	this.rotationSpeed = 0.005;

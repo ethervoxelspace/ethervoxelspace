@@ -46,7 +46,7 @@ export class PlaceExplorerComponent implements OnInit {
 
   repaintVoxelInScene(x, y, z, newMaterial) {
     Engine.world[Engine.getVoxelKey(x, y, z)]
-    .material.color.setHex(this.contractService.colorArray[newMaterial]);
+      .material.color.setHex(this.contractService.colorArray[newMaterial]);
   }
 
   transferVoxelInScene(to, x, y, z) {

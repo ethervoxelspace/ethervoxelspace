@@ -8,7 +8,7 @@ export class Engine {
     static selectedVoxel;
     static controls;
 
-    constructor() {}
+    constructor() { }
 
     static getVoxelKey(x, y, z): string {
         return x + ',' + y + ',' + z;
@@ -27,17 +27,19 @@ export class Engine {
         rendererElement.addEventListener('mousedown', Engine.onRendererClicked, false);
 
         Engine.camera = new THREE.PerspectiveCamera(45, rendererWidth / rendererHeight, 1, 10000);
-        Engine.camera.position.set(127, 127, 127);
 
-        Engine.controls = new THREE.EditorControls(Engine.camera, rendererElement);
+        Engine.controls = new THREE.EditorControls(Engine.camera, rendererElement, new THREE.Vector3(127, 127, 127));
+
+        Engine.camera.position.set(260, 260, 260);
+        Engine.camera.lookAt(255, 255, 255);
 
         const environment_skybox = new THREE.CubeTextureLoader()
             .setPath('assets/skybox/')
             .load(['xz.png', 'xz.png', 'posy.png', 'negy.png', 'xz.png', 'xz.png']);
         Engine.scene.background = environment_skybox;
 
-        const light = new THREE.HemisphereLight( 0xffffff, 0xbbbbbb, 1.0 );
-        Engine.scene.add( light );
+        const light = new THREE.HemisphereLight(0xffffff, 0xbbbbbb, 1.0);
+        Engine.scene.add(light);
 
         Engine.renderer = new THREE.WebGLRenderer({ antialias: true });
         Engine.renderer.setClearColor(0xffffff, 1);
@@ -54,22 +56,21 @@ export class Engine {
         event.preventDefault();
 
         const rect = Engine.renderer.domElement.getBoundingClientRect();
-        mouse.x = ( ( event.clientX - rect.left ) / ( rect.right - rect.left ) ) * 2 - 1;
-        mouse.y = - ( ( event.clientY - rect.top ) / ( rect.bottom - rect.top) ) * 2 + 1;
+        mouse.x = ((event.clientX - rect.left) / (rect.right - rect.left)) * 2 - 1;
+        mouse.y = - ((event.clientY - rect.top) / (rect.bottom - rect.top)) * 2 + 1;
 
-        raycaster.setFromCamera( mouse, Engine.camera );
+        raycaster.setFromCamera(mouse, Engine.camera);
 
-        const intersects = raycaster.intersectObjects( Engine.scene.children );
+        const intersects = raycaster.intersectObjects(Engine.scene.children);
 
-        if ( intersects.length > 0 ) {
-            // intersects[0].object.callback();
+        if (intersects.length > 0) {
             const clickedObject = intersects[0].object;
             Engine.setSelectedVoxel(clickedObject.position.x, clickedObject.position.y, clickedObject.position.z);
         }
     }
 
     static setSelectedVoxel(x, y, z) {
-        if(Engine.world[Engine.getVoxelKey(x, y, z)]) {
+        if (Engine.world[Engine.getVoxelKey(x, y, z)]) {
             Engine.selectedVoxel = Engine.world[Engine.getVoxelKey(x, y, z)].clone();
         }
     }

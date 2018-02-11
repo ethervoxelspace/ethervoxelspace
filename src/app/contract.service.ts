@@ -31,16 +31,11 @@ export class ContractService {
     0xFFCCAA,
   ];
 
-  constructor() {
-    // this.injectWeb3Provider();
-  }
-
+  constructor() { }
 
   injectWeb3Provider(): Promise<boolean> {
-    // Checking if Web3 has been injected by the browser (Mist/MetaMask)
     return new Promise<boolean>((resolve, reject) => {
       if (typeof web3 !== 'undefined') {
-        // web3/index.d.ts 'export' -> '='
         this.web3 = new Web3(Web3.givenProvider);
 
         this.price = this.web3.utils.toWei('0.0001', 'ether');
@@ -50,13 +45,11 @@ export class ContractService {
           this.contract = new this.web3.eth.Contract(ABI, this.contractAddress, { from: accounts[0] });
           resolve(true);
         });
-
       } else {
         console.log('No web3? You should consider trying MetaMask!');
         reject(false);
       }
     });
-
   }
 
   get userAddress(): string {
@@ -72,8 +65,8 @@ export class ContractService {
   getCurrentBlock(): Promise<number> {
     return new Promise<number>((resolve, reject) => {
       this.web3.eth.getBlockNumber()
-      .then(resolve)
-      .catch(reject);
+        .then(resolve)
+        .catch(reject);
     });
   }
 
