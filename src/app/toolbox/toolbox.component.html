@@ -80,7 +80,7 @@
     <button (click)="destroyVoxel(x,y,z)" class="button">Destroy your Voxel</button>
   </div>
   <div *ngIf="transferMode">
-    <button (click)="transferVoxel(to,x,y,z)" class="button">Transfer your Voxel ownership</button>
+    <button (click)="transferVoxel(to.value,x,y,z)" class="button">Transfer your Voxel ownership</button>
     <br>to this address:
     <input #to type="text" class="input" />
     <br>

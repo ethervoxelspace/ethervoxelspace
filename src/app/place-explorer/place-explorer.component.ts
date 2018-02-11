@@ -50,7 +50,7 @@ export class PlaceExplorerComponent implements OnInit {
   }
 
   transferVoxelInScene(to, x, y, z) {
-    Engine.world[Engine.getVoxelKey(x, y, z)].owner = to;
+    Engine.world[Engine.getVoxelKey(x, y, z)].ownerAddress = to;
   }
 
   updateWorldUsingPastEvents() {
