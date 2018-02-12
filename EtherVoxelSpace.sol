@@ -1,6 +1,6 @@
 pragma solidity ^0.4.0;
 
-contract VoxelWorld256 {
+contract EtherVoxelSpace {
     
     struct Voxel {
         uint8 material;
@@ -16,7 +16,7 @@ contract VoxelWorld256 {
     uint constant PRICE = 1000000000000;
     Voxel[256][256][256] public world;
     
-    function VoxelWorld256() public {
+    function EtherVoxelSpace() public {
         creator = msg.sender;
     }
     
