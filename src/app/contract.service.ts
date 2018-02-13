@@ -10,7 +10,7 @@ export class ContractService {
   private web3;
 
   private price;
-  private contractAddress = '0x3B79E32Ec13AEABB4e85eF972334d578a0FDd6f3';
+  private contractAddress = '0x2Eab1392d6850722d19BEc5738912fbdb021277F';
 
   public colorArray = [
     0x000000,
