@@ -20,8 +20,16 @@ export class Engine {
         Engine.world = {};
         Engine.selectedVoxel = {};
 
-        const rendererWidth = 960;
-        const rendererHeight = 640;
+        const maxWidth = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+        const maxHeight = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+
+        let rendererWidth = 960;
+        let rendererHeight = 640;
+
+        if (maxWidth < rendererWidth) {
+            rendererWidth = maxWidth;
+            rendererHeight = maxHeight / 2;
+        }
 
         const rendererElement = document.getElementById('world-viewer');
         rendererElement.addEventListener('mousedown', Engine.onRendererClicked, false);

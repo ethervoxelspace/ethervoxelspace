@@ -9,9 +9,10 @@ header.level{
 .logo{
     height: 50px;
 }
-
-.place{
-    padding: 0px 20px;
+@media (min-width: 960px) {
+    .place{
+        padding: 0px 20px;
+    }
 }
 
 app-toolbox{
@@ -19,6 +20,6 @@ app-toolbox{
 }
 
 .whitepaper {
-    padding: 40px;
+    padding: 20px;
     margin: 40px auto;
 }
