@@ -2,21 +2,29 @@ header.level{
     padding: 15px;
     margin-bottom: 0;
     h1 {
-        padding-left: 15px;
+        /* padding-left: 15px; */
     }
 }
 
 .logo{
     height: 50px;
 }
+
+
 @media (min-width: 960px) {
     .place{
         padding: 0px 20px;
     }
 }
 
-app-toolbox{
-    
+
+
+
+.columns {
+    margin: 0;
+}
+.column {
+    padding: 0;
 }
 
 .whitepaper {
